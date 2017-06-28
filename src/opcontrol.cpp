@@ -11,33 +11,20 @@
  */
 
 #include "main.h"
-#include "ports.h"
+#include "ports.h" //header file with #define macros for all motor/sensor ports
 
-/*
- * Runs the user operator control code. This function will be started in its own task with the
- * default priority and stack size whenever the robot is enabled via the Field Management System
- * or the VEX Competition Switch in the operator control mode. If the robot is disabled or
- * communications is lost, the operator control task will be stopped by the kernel. Re-enabling
- * the robot will restart the task, not resume it from where it left off.
- *
- * If no VEX Competition Switch or Field Management system is plugged in, the VEX Cortex will
- * run the operator control task. Be warned that this will also occur if the VEX Cortex is
- * tethered directly to a computer via the USB A to A cable without any VEX Joystick attached.
- *
- * Code running in this task can take almost any action, as the VEX Joystick is available and
- * the scheduler is operational. However, proper use of delay() or taskDelayUntil() is highly
- * recommended to give other tasks (including system tasks such as updating LCDs) time to run.
- *
- * This task should never exit; it should end with some kind of infinite loop, even if empty.
- */
+//Starting potentiometer values for each side of the lift
+int startLiftL;
+int startLiftR;
 
-int startLiftL;// = analogRead(A_LIFT_POT_L);
-int startLiftR;// = analogRead(A_LIFT_POT_R);
-const float lK = 0.2f;
+//P loop constant
+const float lK = 0.2f; //0.2f
 int liftSpeedL = 127;
 int liftSpeedR = 127;
+
+//desired position (as a zeroed potentiometer value)
 int desiredLift = 0;
-int prevTime;// = millis();
+int prevTime;
 void liftCtlIterate() {
 	int currentLiftL = analogRead(A_LIFT_POT_L) - startLiftL;
 	int currentLiftR = analogRead(A_LIFT_POT_R) - startLiftR;
@@ -51,17 +38,16 @@ void liftCtlIterate() {
 			prevTime = millis();
 			desiredLift-=14;	
 		}
-	} else if(joystickGetDigital(1,8, JOY_UP)){
-		if(millis() - prevTime) >= 10) {
+	} else if(joystickGetDigital(1,8, JOY_UP) || joystickGetDigital(1,8, JOY_LEFT) ||
+		 joystickGetDigital(1,8, JOY_RIGHT) || joystickGetDigital(1, 8, JOY_DOWN) ){
+		if(millis() - prevTime >= 10) {
 			prevTime = millis();
-			desiredLift = 348; //make a macro define
+			desiredLift = 418; //make a macro define 348
 		}
-	}
+	} 
 
 	if(desiredLift > 1620) desiredLift = 1620;
 	else if (desiredLift < 5) desiredLift = 5;
-	//else if (desiredLift-currentLiftL >= 200) desiredLift = currentLiftL+200;
-	//else if (desiredLift-currentLiftL <= -200) desiredLift =currentLiftL -200;
 
 	liftSpeedR = -(lK * (desiredLift-currentLiftR));
 	liftSpeedL = lK * (desiredLift-currentLiftL);
@@ -88,7 +74,7 @@ void operatorControl() {
 
 
 		if (joystickGetDigital(1, 5, JOY_UP) && joystickGetDigital(1, 5, JOY_DOWN)) {
-                        motorSet(M_CLAW, 15);
+                        motorSet(M_CLAW, 30);
                 } 		
 		else if(joystickGetDigital(1, 5, JOY_UP)) {
 			motorSet(M_CLAW, 80);
@@ -100,3 +86,4 @@ void operatorControl() {
 		}
 	}
 }
+
