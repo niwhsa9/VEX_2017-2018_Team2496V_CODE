@@ -60,8 +60,14 @@ void liftCtlIterate() {
 void operatorControl() {
 	startLiftL = analogRead(A_LIFT_POT_L);
 	startLiftR = analogRead(A_LIFT_POT_R);
+	printf("LEFT %d", analogRead(A_LIFT_POT_L));
+	printf("RIGHT %d", analogRead(A_LIFT_POT_R));
 	prevTime = millis();
 	while (1) {
+		if((int)millis%100 == 0) { //debug
+			printf("LEFT %d", analogRead(A_LIFT_POT_L));
+        		printf("RIGHT %d", analogRead(A_LIFT_POT_R));
+		}
 		if(analogRead(A_LIFT_POT_L) != A_UNPLUG && analogRead(A_LIFT_POT_R) != A_UNPLUG) {
 			liftCtlIterate();
 		} else {

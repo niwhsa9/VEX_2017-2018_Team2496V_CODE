@@ -1,5 +1,5 @@
 #include "subsystem.h"
-#include "API.h"
+
 
 Subsystem::~Subsystem() {
 	delete _motors;
@@ -9,9 +9,14 @@ Subsystem::~Subsystem() {
 
 }
 
+void Subsystem::setMotor(int id, int speed) {
+		motorSet(_motors[id], speed * _revField[id]);
+		return;
+}
+
 void Subsystem::setAll(int speed) {
 		for(int i = 0; i < _num; i++) {
-				setMotor(_motors[i], speed * _revField[i]);
+				motorSet(_motors[i], speed * _revField[i]);
 		}
 		return;
 }

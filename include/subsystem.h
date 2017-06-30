@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-
+#include "main.h"
 
 class Subsystem {
 	public:
@@ -9,12 +9,12 @@ class Subsystem {
 		_name(name), _motors(motors), _revField(revField), _num(num), _sensors(sensors), _id(id)
 		{};
 		void setAll(int speed);
-		virtual void setMotor(const int id, int speed) = 0;
+		void setMotor(const int id, int speed);
 		virtual void debug() = 0;
 		virtual void iterateCtl() = 0;//use a function pointer to loop through each subsystem and get this
 		virtual int eStop() = 0;
 		~Subsystem();
-	private:
+	protected:
 		const char *_name;
 		const int *_motors;
 		const int *_revField;
@@ -28,6 +28,12 @@ do implementation specific motors, sensors, buttons
 e.g. DR4B
 pass motors constructor param of super with the tr, br, tl, bl
 motors in the array with specified order. Then in the DR4B
-child have constructor assign motor[0] = [field] tr
+child have constructor assign tr = 0
+br = 1
+..
 
+
+setMotor(i, speed) {
+	setMotor(motor[i], speed * revField[i]);
+}
 */
