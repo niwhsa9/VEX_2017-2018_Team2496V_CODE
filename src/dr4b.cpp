@@ -15,8 +15,8 @@ void DR4B::init() {
   liftSpeedL = 127;
   liftSpeedR = 127;
   desiredLift = 0;
-  startLiftL = analogRead(A_LIFT_POT_L);
-	startLiftR = analogRead(A_LIFT_POT_R);
+  startLiftL = getHeight('l');
+	startLiftR = getHeight('r');
 	prevTime = millis();
   _tr = 0;
   _br = 1;
@@ -28,9 +28,19 @@ void DR4B::moveTo(int position) {
 
 }
 
+bool DR4B::safe() {
+  if(getHeight('l') != A_UNPLUG && getHeight('r') != A_UNPLUG) {
+    return true;
+  } else return false;
+}
+
+void DR4B::backup() {
+  
+}
+
 void DR4B::iterateCtl() {
-  int currentLiftL = analogRead(A_LIFT_POT_L) - startLiftL;
-  int currentLiftR = analogRead(A_LIFT_POT_R) - startLiftR;
+  int currentLiftL = getHeight('l') - startLiftL;
+  int currentLiftR = getHeight('r') - startLiftR;
   if(joystickGetDigital(1,6, JOY_UP)){
     if((millis()- prevTime) >= 10) {
   		prevTime = millis();
@@ -52,12 +62,11 @@ void DR4B::iterateCtl() {
   	if(desiredLift > 1620) desiredLift = 1620;
   	else if (desiredLift < 5) desiredLift = 5;
 
-  	liftSpeedR = -(lK * (desiredLift-currentLiftR));
+  	liftSpeedR = (lK * (desiredLift-currentLiftR));
   	liftSpeedL = lK * (desiredLift-currentLiftL);
 
-  	motorSet(M_LIFT_BR, liftSpeedR);
-  	motorSet(M_LIFT_BL, liftSpeedL);
-  	motorSet(M_LIFT_TR, liftSpeedR);
-  	motorSet(M_LIFT_TL, liftSpeedL);
-
+  	setMotor(_br, liftSpeedR);
+  	setMotor(_bl, liftSpeedL);
+  	setMotor(_tr, liftSpeedR);
+  	setMotor(_tl, liftSpeedL);
 }

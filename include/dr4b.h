@@ -11,8 +11,10 @@ class DR4B : Subsystem{
       void moveTo(int position);
   		void debug();
   		void iterateCtl();//use a function pointer to loop through each subsystem and get this
+      void backup();
   		int eStop();
-      void init(int fr, int );
+      void init( );
+      bool safe();
 
     private:
       int getHeight(char h);
