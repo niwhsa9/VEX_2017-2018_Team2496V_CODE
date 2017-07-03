@@ -96,7 +96,7 @@ void DR4B::debug() {
 */
 int DR4B::eStop() {
   setAll(0);
-  delete this; //PROS delete functionality lacking
+  //delete this; //PROS delete functionality lacking
   return 0;
 }
 
