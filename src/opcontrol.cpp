@@ -8,8 +8,6 @@ void operatorControl() {
 	if(isSubInit!=true) { //Ensure subsystems were created
 		subsystemInit();
 	}
-
-
 	/* MAIN CONTROL LOOP */
 	while (1) {
 		if(lift->safe()) {  		//Lift P(ID) control
@@ -20,10 +18,7 @@ void operatorControl() {
 		/*************************
 		* HERE DOWN NEEDS UPDATE *
 		**************************/
-		motorSet(M_DRIVE_BL, joystickGetAnalog(1, 3));
-		motorSet(M_DRIVE_BR, -joystickGetAnalog(1, 2));
-		motorSet(M_DRIVE_FR, -joystickGetAnalog(1, 2));
-		motorSet(M_DRIVE_FL, joystickGetAnalog(1, 3));
+		
 
 
 		if (joystickGetDigital(1, 5, JOY_UP) && joystickGetDigital(1, 5, JOY_DOWN)) {

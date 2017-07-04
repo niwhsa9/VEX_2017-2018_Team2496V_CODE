@@ -44,5 +44,8 @@ class DR4B : Subsystem{
       //sensors
       int _lp;
       int _rp;
+
+      int prevErrorL;
+      int prevErrorR;
 };
 #endif

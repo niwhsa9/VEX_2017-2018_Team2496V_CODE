@@ -1,10 +1,16 @@
 #ifndef PORTS_H
 #define PORTS_H
 /* PORT MAP */
+//Digital sensors (1-12)
+#define D_DRIVE_ENC_R1 2
+#define D_DRIVE_ENC_R2 3
+#define D_DRIVE_ENC_L1 5
+#define D_DRIVE_ENC_L2 6
 
 //analog sensors (1-10)
 #define A_LIFT_POT_R 3
 #define A_LIFT_POT_L 2
+
 //motor (1-10)
 #define M_LIFT_TR 7
 #define M_LIFT_TL 4
@@ -24,5 +30,9 @@
 #define DR4B_START_L 1275
 #define DR4B_START_R 1302
 
-
+/* DRIVE DEFINES */
+#define DRIVE_TURN_THRESHOLD 2
+#define DRIVE_MOVE_THRESHOLD 2
+#define DRIVE_MIN_SPEED 15
+#define PI 3.14159265358
 #endif

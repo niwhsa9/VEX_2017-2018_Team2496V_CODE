@@ -25,6 +25,8 @@ void DR4B::init() {
   startLiftL = getHeight('l');
   startLiftR = getHeight('r');
   prevTime = millis();
+  prevErrorL = 0;
+  prevErrorR = 0;
   _tr = 0;
   _br = 1;
   _tl = 2;
@@ -47,12 +49,20 @@ void DR4B::setDesired(int position) {
 void DR4B::moveTo() { //change position to percentage?
   int currentLiftL;
   int currentLiftR;
+  prevErrorL = 0;
+  prevErrorR = 0;
   while(abs(currentLiftR-desiredLift) >= DR4B_THRESHOLD && abs(currentLiftL-desiredLift) >= DR4B_THRESHOLD) {
     currentLiftL = getHeight('l') - startLiftL;
     currentLiftR = getHeight('r') - startLiftR;
 
-    liftSpeedR = (lK * (desiredLift-currentLiftR));
-    liftSpeedL = lK * (desiredLift-currentLiftL);
+    int curErrorR = (desiredLift-currentLiftR);
+    int curErrorL = (desiredLift-currentLiftL);
+
+    liftSpeedR = (lK * curErrorR) + (dK * (curErrorR-prevErrorR));
+    liftSpeedL = (lK * curErrorL) + (dK * (curErrorL-prevErrorL));
+
+    prevErrorL = curErrorL;
+    prevErrorR = curErrorR;
 
     setMotor(_br, liftSpeedR);
     setMotor(_bl, liftSpeedL);
@@ -79,7 +89,7 @@ void DR4B::backup() {
     setAll(80);
   } else if (joystickGetDigital(1,6,JOY_DOWN)){
     setAll(-80);
-  }
+  } else setAll(0);
 }
 
 /*
@@ -101,8 +111,8 @@ int DR4B::eStop() {
 }
 
 /*
-* Main proportional control loop with user input
-* TODO: PID
+* Main proportional/derrivitave control loop with user input
+* TODO: Integral component
 */
 void DR4B::iterateCtl() {
   int currentLiftL = getHeight('l') - startLiftL;
@@ -127,8 +137,16 @@ void DR4B::iterateCtl() {
   if(desiredLift > DR4B_MAX) desiredLift = DR4B_MAX;
   else if (desiredLift < 5) desiredLift = 5;
 
-  liftSpeedR = (lK * (desiredLift-currentLiftR));
-  liftSpeedL = lK * (desiredLift-currentLiftL);
+  //liftSpeedR = (lK * (desiredLift-currentLiftR));
+  //liftSpeedL = lK * (desiredLift-currentLiftL);
+  int curErrorR = (desiredLift-currentLiftR);
+  int curErrorL = (desiredLift-currentLiftL);
+
+  liftSpeedR = (lK * curErrorR) + (dK * (curErrorR-prevErrorR));
+  liftSpeedL = (lK * curErrorL) + (dK * (curErrorL-prevErrorL));
+
+  prevErrorL = curErrorL;
+  prevErrorR = curErrorR;
 
   setMotor(_br, liftSpeedR);
   setMotor(_bl, liftSpeedL);

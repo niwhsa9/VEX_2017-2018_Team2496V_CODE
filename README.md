@@ -4,13 +4,14 @@
   - User defined equivalent of main.h, which isn't modified in the interest of seperating PROS code from user code
   - contains #define macros cortex port mapping
   - contains subsystem #define macros for various constants and such
-  - contains references to subsytem instances initalized in init.cpp
 - *subsystem.h*
   - Abstract base class containing mostly pure virtual functions that defines a basic motor system functionality for all motor systems to inherit from
 - *main.h*
   - PROS predefined header with inclusion of the API and references to opcontrol(), auto(), and initalize() functions
 - *api.h*
   - PROS predefined header with the library
+- *robot.h*
+  - contains references to subsytem instances initalized in init.cpp
 
 **Heads (.h) + Source (.cpp)**
   - *DR4B.h + DR4B.cpp*
