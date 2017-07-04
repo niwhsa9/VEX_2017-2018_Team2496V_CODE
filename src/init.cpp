@@ -1,16 +1,25 @@
-/** @file init.c
- * @brief File for initialization code
- *
- * This file should contain the user initialize() function and any functions related to it.
- *
- * Any copyright is dedicated to the Public Domain.
- * http://creativecommons.org/publicdomain/zero/1.0/
- *
- * PROS contains FreeRTOS (http://www.freertos.org) whose source code may be
- * obtained from http://sourceforge.net/projects/freertos/files/ or on request.
- */
-
 #include "main.h"
+#include "ports.h"
+#include "robot.h"
+  bool isSubInit = false;
+  DR4B *lift;
+  //* LIFT INITALIZATION *//
+void subsystemInit() {
+  int liftMotors[] = {M_LIFT_TR, M_LIFT_BR, M_LIFT_TL, M_LIFT_BL};
+  int liftRev[] = {1, 1, -1, -1};
+  int liftSensors[] = {A_LIFT_POT_L, A_LIFT_POT_R};
+  lift = new DR4B(
+    "Double Reverse Four Bar",
+    liftMotors,
+    liftRev,
+    4,
+    liftSensors,
+    0
+  );
+  lift->init();
+
+  isSubInit = true;
+}
 
 /*
  * Runs pre-initialization code. This function will be started in kernel mode one time while the
@@ -20,8 +29,11 @@
  * states (digitalWrite()) of limit switches, push buttons, and solenoids. It can also safely
  * configure a UART port (usartOpen()) but cannot set up an LCD (lcdInit()).
  */
+ extern "C" {
 void initializeIO() {
+
 }
+
 
 /*
  * Runs user initialization code. This function will be started in its own task with the default
@@ -37,4 +49,5 @@ void initializeIO() {
  * can be implemented in this task if desired.
  */
 void initialize() {
+}
 }

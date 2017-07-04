@@ -1,7 +1,7 @@
 
 #include "dr4b.h"
 const float DR4B::lK= 0.2f;
-
+const float DR4B::dK = 0.05f;
 /*
 * Read potentiometer on specified side
 */

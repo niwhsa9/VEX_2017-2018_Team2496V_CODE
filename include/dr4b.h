@@ -1,6 +1,9 @@
 #include "ports.h"
 #include "subsystem.h"
 
+#ifndef DR4B_H
+#define DR4B_H
+
 class DR4B : Subsystem{
     public:
       DR4B(const char *name, const int *motors, const int *revField,
@@ -24,7 +27,7 @@ class DR4B : Subsystem{
       int startLiftR;
 
       const static float lK; //P loop constant
-
+      const static float dK; //D loop constant
       //Lift operating speed
       int liftSpeedL;
       int liftSpeedR;
@@ -42,3 +45,4 @@ class DR4B : Subsystem{
       int _lp;
       int _rp;
 };
+#endif

@@ -2,6 +2,9 @@
 #include <string.h>
 #include "main.h"
 
+#ifndef SUBSYSTEM_H
+#define SUBSYSTEM_H
+
 class Subsystem {
 	public:
 		Subsystem(const char *name, const int *motors, const int *revField,
@@ -37,3 +40,4 @@ setMotor(i, speed) {
 	setMotor(motor[i], speed * revField[i]);
 }
 */
+#endif

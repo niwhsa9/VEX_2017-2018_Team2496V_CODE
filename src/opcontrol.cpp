@@ -1,30 +1,21 @@
 #include "main.h"
 #include "ports.h"
-#include "dr4b.h"
+#include "robot.h"
 
 extern "C" { //Make compatible with C
 void operatorControl() {
 
-	//* LIFT INITALIZATION *//
-	int liftMotors[] = {M_LIFT_TR, M_LIFT_BR, M_LIFT_TL, M_LIFT_BL};
-	int liftRev[] = {1, 1, -1, -1};
-	int liftSensors[] = {A_LIFT_POT_L, A_LIFT_POT_R};
-	DR4B lift(
-		"Double Reverse Four Bar",
-		liftMotors,
-		liftRev,
-		4,
-		liftSensors,
-		0
-	);
-	lift.init();
+	if(isSubInit!=true) { //Ensure subsystems were created
+		subsystemInit();
+	}
+
 
 	/* MAIN CONTROL LOOP */
 	while (1) {
-		if(lift.safe()) {  		//Lift P(ID) control
-			lift.iterateCtl();
+		if(lift->safe()) {  		//Lift P(ID) control
+			lift->iterateCtl();
 		} else { 							//Direct control
-			lift.backup();
+			lift->backup();
 		}
 		/*************************
 		* HERE DOWN NEEDS UPDATE *

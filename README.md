@@ -28,6 +28,7 @@
     - Contains pregame code for LCD display & sensor debug including gyro and drive encoders
     - Gyro callibration
     - Subsystem initalization
+    - Stops initalization thread for auto or opcontrol
   - *auto.c*
     - Autonomous code, handles autonomous thread creation/management
     - Autonomous failsafe thread
