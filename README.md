@@ -40,3 +40,9 @@
     - Stops driver threads and deallocate waste memory
 
 **NOTE: Skills challenge code written in RobotC not shown here.**
+
+    Optimization TODO:
+    -Delete unused variables
+    -gyroDisable() and such
+    -Remove unnecessary operations from loops
+    -Thread optimization

@@ -10,6 +10,7 @@
 //analog sensors (1-10)
 #define A_LIFT_POT_R 3
 #define A_LIFT_POT_L 2
+#define A_DRIVE_GYRO 1
 
 //motor (1-10)
 #define M_LIFT_TR 7

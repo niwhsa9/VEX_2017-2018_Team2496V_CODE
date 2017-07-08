@@ -10,16 +10,16 @@ void operatorControl() {
 	}
 	/* MAIN CONTROL LOOP */
 	while (1) {
-		if(lift->safe()) {  		//Lift P(ID) control
+		if(lift->safe()) {  		//Lift P(I)D control
 			lift->iterateCtl();
 		} else { 							//Direct control
 			lift->backup();
 		}
+		drive->iterateCtl(); //Direct control
+
 		/*************************
 		* HERE DOWN NEEDS UPDATE *
 		**************************/
-		
-
 
 		if (joystickGetDigital(1, 5, JOY_UP) && joystickGetDigital(1, 5, JOY_DOWN)) {
                         motorSet(M_CLAW, 30);

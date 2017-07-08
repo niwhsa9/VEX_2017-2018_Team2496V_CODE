@@ -10,7 +10,8 @@ class Drive : Subsystem{
   			const int num, const int *sensors=(const int *)malloc(1), char id=255):
         Subsystem(name, motors, revField, num, _sensors, id)
         {init();};
-      void move(float distance, int speed, int direction); //tranverse the z_axis
+      void move(float distance, int speed, int direction); //tranverse the z_axis fml
+      //rename that sheet ^^^
   		void debug();
   		void iterateCtl();
   		int eStop();
@@ -36,5 +37,6 @@ class Drive : Subsystem{
       int gy;
       Encoder le;
       Encoder re;
+      Gyro gyro;
 };
 #endif

@@ -1,22 +1,23 @@
 #include "main.h"
 #include "ports.h"
 #include "robot.h"
-  bool isSubInit = false;
-  DR4B *lift;
-  //* LIFT INITALIZATION *//
+bool isSubInit = false;
+DR4B *lift;
+Drive *drive;
+
 void subsystemInit() {
+  /* LIFT INITALIZATION */
   int liftMotors[] = {M_LIFT_TR, M_LIFT_BR, M_LIFT_TL, M_LIFT_BL};
   int liftRev[] = {1, 1, -1, -1};
   int liftSensors[] = {A_LIFT_POT_L, A_LIFT_POT_R};
-  lift = new DR4B(
-    "Double Reverse Four Bar",
-    liftMotors,
-    liftRev,
-    4,
-    liftSensors,
-    0
-  );
+  lift = new DR4B("Double Reverse Four Bar", liftMotors, liftRev, 4, liftSensors, 0);
   lift->init();
+  /* DRIVE INITALIZATION */
+  int driveMotors[] = {M_DRIVE_FR, M_DRIVE_BR, M_DRIVE_FL, M_DRIVE_BL};
+  int driveRev[] = {-1, -1, 1, 1};
+  int driveSensors[] = {D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, A_DRIVE_GYRO};
+  drive = new Drive("Drive", driveMotors, driveRev, 4, driveSensors, 1); //4 ports, 6 motors
+  drive->init();
 
   isSubInit = true;
 }
