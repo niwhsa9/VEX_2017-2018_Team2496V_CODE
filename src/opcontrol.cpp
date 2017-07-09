@@ -16,21 +16,9 @@ void operatorControl() {
 			lift->backup();
 		}
 		drive->iterateCtl(); //Direct control
+		claw->iterateCtl(); //Direct control
 
-		/*************************
-		* HERE DOWN NEEDS UPDATE *
-		**************************/
-
-		if (joystickGetDigital(1, 5, JOY_UP) && joystickGetDigital(1, 5, JOY_DOWN)) {
-                        motorSet(M_CLAW, 30);
-                }
-		else if(joystickGetDigital(1, 5, JOY_UP)) {
-			motorSet(M_CLAW, 80);
-		} else if (joystickGetDigital(1, 5, JOY_DOWN)) {
-			motorSet(M_CLAW, -80);
-		} else {
-			motorSet(M_CLAW, 0);
 		delay(10);
-		}
+
 	}
 }}

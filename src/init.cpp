@@ -4,6 +4,7 @@
 bool isSubInit = false;
 DR4B *lift;
 Drive *drive;
+Claw *claw;
 
 void subsystemInit() {
   /* LIFT INITALIZATION */
@@ -18,6 +19,13 @@ void subsystemInit() {
   int driveSensors[] = {D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, A_DRIVE_GYRO};
   drive = new Drive("Drive", driveMotors, driveRev, 4, driveSensors, 1); //4 ports, 6 motors
   drive->init();
+  /*CLAW INITALIZATION*/
+  int clawMotors[] = {M_CLAW};
+  int clawRev[] = {1};
+  int clawSensors[] = {I2C_CLAW_ENC};
+  claw = new Claw("Claw", clawMotors, clawRev, 1, clawSensors, 2);
+  claw->init();
+
 
   isSubInit = true;
 }
@@ -32,7 +40,7 @@ void subsystemInit() {
  */
  extern "C" {
 void initializeIO() {
-
+    watchdogInit();
 }
 
 
@@ -50,5 +58,8 @@ void initializeIO() {
  * can be implemented in this task if desired.
  */
 void initialize() {
+  setTeamName("2496V");
+  imeInitializeAll();
+  subsystemInit();
 }
 }

@@ -47,8 +47,8 @@ void DR4B::setDesired(int position) {
 * in autonomous mode
 */
 void DR4B::moveTo() { //change position to percentage?
-  int currentLiftL;
-  int currentLiftR;
+  int currentLiftL=0;
+  int currentLiftR=0;
   prevErrorL = 0;
   prevErrorR = 0;
   while(abs(currentLiftR-desiredLift) >= DR4B_THRESHOLD && abs(currentLiftL-desiredLift) >= DR4B_THRESHOLD) {

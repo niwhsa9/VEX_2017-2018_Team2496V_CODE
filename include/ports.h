@@ -1,6 +1,9 @@
 #ifndef PORTS_H
 #define PORTS_H
 /* PORT MAP */
+//I2C Device ID's
+#define I2C_CLAW_ENC 0
+
 //Digital sensors (1-12)
 #define D_DRIVE_ENC_R1 2
 #define D_DRIVE_ENC_R2 3
