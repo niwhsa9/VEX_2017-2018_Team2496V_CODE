@@ -53,6 +53,6 @@ void Claw::iterateCtl() {
     setMotor(0, -80);
   } else {
     setMotor(0, 0);
-  
+
   }
 }

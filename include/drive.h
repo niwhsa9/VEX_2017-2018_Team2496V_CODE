@@ -17,6 +17,10 @@ class Drive : Subsystem{
   		int eStop();
       void init();
       void turn(char dir, float deg);
+      void callibrateGyro();
+      Encoder le;
+      Encoder re;
+      Gyro gyro;
 
     private:
 
@@ -35,8 +39,6 @@ class Drive : Subsystem{
       int el1;
       int el2;
       int gy;
-      Encoder le;
-      Encoder re;
-      Gyro gyro;
+
 };
 #endif

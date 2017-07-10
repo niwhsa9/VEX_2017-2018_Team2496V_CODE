@@ -25,9 +25,34 @@ void subsystemInit() {
   int clawSensors[] = {I2C_CLAW_ENC};
   claw = new Claw("Claw", clawMotors, clawRev, 1, clawSensors, 2);
   claw->init();
-
-
   isSubInit = true;
+}
+
+
+/* HANDLES USER INPUT THROUGH LCD */
+void checkInput() {
+  //middle button: recalibrate gyro
+  //left or right: change auton
+}
+
+/* CLEARS/DISPLAYS VALUES */
+void updateLCD() {
+    /*
+    gyro value (2), (1), IME claw (2), (1), Quad left (2), (1), Quad right(2), (1), Battery (3)
+    [G][V][][C][V][][R][V][][L][V][][B][V][V][]
+    [<][A][U][T][O][M][O][D][E][>][][][][][][]
+    */
+    char *line1, *line2;
+    int cw;
+    //uchar a = (uchar)claw->_sensors[0];
+    imeGet(0, &cw);
+    sprintf(
+      line1, "G%d1.0 C%d1.0 L%d1.0 R%d1.0 B%d1.4", gyroGet(drive->gyro),
+      cw, encoderGet(drive->le), encoderGet(drive->re), powerLevelMain()
+    );
+    //sprintf(line2, "G%d", gyroGet(drive->gyro));
+    lcdSetText(uart2, 1, line1);
+    lcdSetText(uart2, 2, line2);
 }
 
 /*
@@ -61,5 +86,12 @@ void initialize() {
   setTeamName("2496V");
   imeInitializeAll();
   subsystemInit();
+  lcdInit(uart2);
+  lcdSetBacklight(uart2, true);
+  lcdClear(uart2);
+  updateLCD();
+  while(!isEnabled()) {
+    checkInput();
+  }
 }
 }
