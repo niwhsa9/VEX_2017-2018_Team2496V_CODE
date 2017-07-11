@@ -14,7 +14,7 @@ void Claw::setDesired(int des) {
 }
 
 /*
-* Move claw to value speified by desiredLift
+* Move claw to value speified by desired
 * start on seperate thread for continious control
 * in autonomous mode
 */

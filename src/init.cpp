@@ -5,6 +5,8 @@ bool isSubInit = false;
 DR4B *lift;
 Drive *drive;
 Claw *claw;
+char *prevText1, *prevText2;
+int prevButtonEvent = millis();
 
 void subsystemInit() {
   /* LIFT INITALIZATION */
@@ -33,8 +35,22 @@ void subsystemInit() {
 void checkInput() {
   //middle button: recalibrate gyro
   //left or right: change auton
+  int cT = millis();
+  if(cT - prevButtonEvent >= 500) {
+  if(lcdReadButtons(uart2) == 2) {
+    lcdSetText(uart2, 1, "Calibrating Gyro");
+    drive->callibrateGyro();
+    lcdSetText(uart2, 1, "FINISHED!");
+    delay(200);
+  } else if (lcdReadButtons(uart2) == 1) autoMode--;
+  else if (lcdReadButtons(uart2) == 4) autoMode++;
+  else if (lcdReadButtons(uart2) == 7) printf("ALIVE AT %d", powerLevelMain());
+  }  else return;
+  prevButtonEvent = cT;
+  autoMode = (autoMode < 0) ? 0 : autoMode;
+  autoMode = (autoMode >= numAuto) ? numAuto : autoMode;
+  return; //explicit for readibility
 }
-
 /* CLEARS/DISPLAYS VALUES */
 void updateLCD() {
     /*
@@ -50,7 +66,7 @@ void updateLCD() {
       line1, "G%d1.0 C%d1.0 L%d1.0 R%d1.0 B%d1.4", gyroGet(drive->gyro),
       cw, encoderGet(drive->le), encoderGet(drive->re), powerLevelMain()
     );
-    //sprintf(line2, "G%d", gyroGet(drive->gyro));
+    sprintf(line2, "<%s>", autoModeStr[autoMode]);
     lcdSetText(uart2, 1, line1);
     lcdSetText(uart2, 2, line2);
 }
@@ -83,7 +99,7 @@ void initializeIO() {
  * can be implemented in this task if desired.
  */
 void initialize() {
-  setTeamName("2496V");
+  setTeamName("2496V"); //BHS Robopatty V
   imeInitializeAll();
   subsystemInit();
   lcdInit(uart2);
@@ -92,6 +108,8 @@ void initialize() {
   updateLCD();
   while(!isEnabled()) {
     checkInput();
+    updateLCD();
+    delay(20);
   }
 }
 }

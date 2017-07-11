@@ -2,7 +2,11 @@
 #include "ports.h"
 #include "robot.h"
 
-
+int autoMode = 0;
+const char *autoModeStr[] = {
+  "Primary", "Secondary"
+};
+int numAuto = 2;
 /*
  * Runs the user autonomous code. This function will be started in its own task with the default
  * priority and stack size whenever the robot is enabled via the Field Management System or the

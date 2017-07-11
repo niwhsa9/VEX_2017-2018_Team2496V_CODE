@@ -12,4 +12,9 @@ extern Claw *claw;
 extern bool isSubInit;
 void subsystemInit();
 
+/* AUTON  */
+extern int autoMode;
+extern const char *autoModeStr[];
+extern int numAuto;
+
 #endif
