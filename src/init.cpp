@@ -2,9 +2,9 @@
 #include "ports.h"
 #include "robot.h"
 bool isSubInit = false;
-DR4B *lift;
-Drive *drive;
-Claw *claw;
+DR4B* lift;
+Drive* drive;
+Claw* claw;
 char *prevText1, *prevText2;
 int prevButtonEvent = millis();
 
@@ -15,13 +15,14 @@ void subsystemInit() {
   int liftSensors[] = {A_LIFT_POT_L, A_LIFT_POT_R};
   lift = new DR4B("Double Reverse Four Bar", liftMotors, liftRev, 4, liftSensors, 0);
   lift->init();
-  /* DRIVE INITALIZATION */
+
+  //HERE DOWN BROKEN
   int driveMotors[] = {M_DRIVE_FR, M_DRIVE_BR, M_DRIVE_FL, M_DRIVE_BL};
   int driveRev[] = {-1, -1, 1, 1};
   int driveSensors[] = {D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, A_DRIVE_GYRO};
   drive = new Drive("Drive", driveMotors, driveRev, 4, driveSensors, 1); //4 ports, 6 motors
   drive->init();
-  /*CLAW INITALIZATION*/
+
   int clawMotors[] = {M_CLAW};
   int clawRev[] = {1};
   int clawSensors[] = {I2C_CLAW_ENC};
@@ -80,8 +81,11 @@ void updateLCD() {
  * configure a UART port (usartOpen()) but cannot set up an LCD (lcdInit()).
  */
  extern "C" {
+    void __libc_init_array();
+} //MAKE EXTERN C ENCOMPASS ENTIRE THING
 void initializeIO() {
-    watchdogInit();
+    //watchdogInit();
+    __libc_init_array();
 }
 
 
@@ -99,9 +103,12 @@ void initializeIO() {
  * can be implemented in this task if desired.
  */
 void initialize() {
+  //printf("starting");
+
   setTeamName("2496V"); //BHS Robopatty V
   imeInitializeAll();
   subsystemInit();
+
   lcdInit(uart2);
   lcdSetBacklight(uart2, true);
   lcdClear(uart2);
@@ -111,5 +118,4 @@ void initialize() {
     updateLCD();
     delay(20);
   }
-}
 }

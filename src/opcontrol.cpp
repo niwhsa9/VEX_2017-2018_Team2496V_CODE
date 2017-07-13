@@ -2,7 +2,7 @@
 #include "ports.h"
 #include "robot.h"
 
-extern "C" { //Make compatible with C
+//extern "C" { //Make compatible with C
 void operatorControl() {
 
 	if(isSubInit!=true) { //Ensure subsystems were created
@@ -15,10 +15,11 @@ void operatorControl() {
 		} else { 							//Direct control
 			lift->backup();
 		}
+		//motorSet(1, 127);
+		lift->backup();
 		drive->iterateCtl(); //Direct control
-		claw->iterateCtl(); //Direct control
-
+		claw->iterateCtl(); //Direct control */
+		printf("alive");
 		delay(10);
-
 	}
-}}
+}//}

@@ -26,7 +26,7 @@ void Drive::init() {
 /*
 * Callibrates gyroscope sensors,
 * NEVER USE WITHIN LOOP, hogs resources
-* and makes gyro unusuable 
+* and makes gyro unusuable
 */
 void Drive::callibrateGyro() {
   gyroShutdown(gyro);

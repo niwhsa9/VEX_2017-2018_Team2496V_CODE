@@ -90,6 +90,9 @@ void DR4B::backup() {
   } else if (joystickGetDigital(1,6,JOY_DOWN)){
     setAll(-80);
   } else setAll(0);
+  //if(joystickGetDigital(1,6, JOY_UP)){
+  //   motorSet(6, 40);
+  //}
 }
 
 /*
