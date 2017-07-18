@@ -6,10 +6,9 @@
 
 class Drive : Subsystem{
     public:
-      Drive(const char *name, int *motors, int *revField,
-  		int num, int *sensors=(int *)malloc(1), char id=255):
-        Subsystem(name, motors, revField, num, _sensors, id)
-        {init();};
+      Drive(const char *name, int motors[10], int revField[10],
+  		int num, int sensors[10], char id);
+
       void move(float distance, int speed, int direction); //tranverse the z_axis fml
       //rename that sheet ^^^
   		void debug();

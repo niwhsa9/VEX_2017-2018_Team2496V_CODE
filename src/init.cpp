@@ -17,11 +17,11 @@ void subsystemInit() {
   int liftSensors[10] = {A_LIFT_POT_L, A_LIFT_POT_R};
   lift = new DR4B("Double Reverse Four Bar", liftMotors, liftRev, 4, liftSensors, 0);
   lift->init();
-/*
+
   //HERE DOWN BROKEN
-  int driveMotors[] = {M_DRIVE_FR, M_DRIVE_BR, M_DRIVE_FL, M_DRIVE_BL};
-  int driveRev[] = {-1, -1, 1, 1};
-  int driveSensors[] = {D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, A_DRIVE_GYRO};
+  int driveMotors[10] = {M_DRIVE_FR, M_DRIVE_BR, M_DRIVE_FL, M_DRIVE_BL};
+  int driveRev[10] = {-1, -1, 1, 1};
+  int driveSensors[10] = {D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, A_DRIVE_GYRO};
   drive = new Drive("Drive", driveMotors, driveRev, 4, driveSensors, 1); //4 ports, 6 motors
   drive->init();
 
@@ -29,7 +29,7 @@ void subsystemInit() {
   int clawRev[] = {1};
   int clawSensors[] = {I2C_CLAW_ENC};
   claw = new Claw("Claw", clawMotors, clawRev, 1, clawSensors, 2);
-  claw->init(); */
+  claw->init();
   isSubInit = true;
 }
 

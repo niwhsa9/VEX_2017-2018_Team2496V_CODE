@@ -28,8 +28,8 @@ void DR4B::init() {
   liftSpeedL = DR4B_START_L;
   liftSpeedR = DR4B_START_R;
   desiredLift = 0;
-  startLiftL = getHeight('l');
-  startLiftR = getHeight('r');
+  startLiftL =  DR4B_START_L;
+  startLiftR =  DR4B_START_R;
   prevTime = millis();
   prevErrorL = 0;
   prevErrorR = 0;

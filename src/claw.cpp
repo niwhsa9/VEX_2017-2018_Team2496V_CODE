@@ -1,4 +1,10 @@
 #include "claw.h"
+
+Claw::Claw(const char *name, int motors[10], int revField[10],
+  int num, int sensors[10], char id=255):
+  Subsystem(name, motors, revField, num, _sensors, id)
+  {};
+
 /*
 * Initalize variables needed for operation,
 * ALWAYS EXPLICITLY call this after initalization.
