@@ -16,7 +16,7 @@ void operatorControl() {
 			lift->backup();
 		}
 		drive->iterateCtl(); //Direct control
-		
+
 		claw->iterateCtl(); //Direct control */
 		//printf("alive");
 		delay(10);

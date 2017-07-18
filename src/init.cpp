@@ -110,7 +110,7 @@ void initialize() {
   setTeamName("2496V"); //BHS Robopatty V
   imeInitializeAll();
   subsystemInit();
-/*
+
   lcdInit(uart2);
   lcdSetBacklight(uart2, true);
   lcdClear(uart2);
@@ -119,5 +119,5 @@ void initialize() {
     checkInput();
     updateLCD();
     delay(20);
-  } */
+  }
 }
