@@ -6,16 +6,14 @@
 
 class DR4B : Subsystem{
     public:
-      DR4B(const char *name, const int *motors, const int *revField,
-  			const int num, const int *sensors=(const int *)malloc(1), char id=255):
-        Subsystem(name, motors, revField, num, _sensors, id)
-        {init();};
+      DR4B(const char *name, int motors[10], int revField[10],
+  		const int num, int sensors[10], const char id);
       void moveTo();
   		void debug();
   		void iterateCtl();
       void backup();
   		int eStop();
-      void init( );
+      void init();
       bool safe();
       void setDesired(int position);
 

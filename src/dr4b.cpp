@@ -1,12 +1,18 @@
-
 #include "dr4b.h"
 const float DR4B::lK= 0.2f;
 const float DR4B::dK = 0.05f;
+
+DR4B::DR4B(const char *name, int motors[10],	int revField[10],
+  const int num, int sensors[10], const char id=255):
+  Subsystem(name, motors, revField, num, sensors, id)
+  {};
 /*
 * Read potentiometer on specified side
 */
 int DR4B::getHeight(char h) {
+//  printf("MOTOR 1 %d", _motors[1]);
   if(h=='l') {
+    //printf("\n %d", _revField[2]);
     return analogRead(_sensors[0]);
   } else {
     return analogRead(_sensors[1]);
@@ -90,9 +96,11 @@ void DR4B::backup() {
   } else if (joystickGetDigital(1,6,JOY_DOWN)){
     setAll(-80);
   } else setAll(0);
-  //if(joystickGetDigital(1,6, JOY_UP)){
-  //   motorSet(6, 40);
-  //}
+  if(joystickGetDigital(1,5, JOY_UP)){ //rm
+     motorSet(6, 40);
+    //setMotor(1, 127);
+  } else motorSet(6, 0);
+//  setAll(80);
 }
 
 /*

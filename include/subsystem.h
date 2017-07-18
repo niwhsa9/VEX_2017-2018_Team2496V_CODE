@@ -7,10 +7,8 @@
 
 class Subsystem {
 	public:
-		Subsystem(const char *name, const int *motors, const int *revField,
-			const int num, const int *sensors=(const int *)malloc(1), char id=255):
-		_name(name), _motors(motors), _revField(revField), _num(num), _sensors(sensors), _id(id)
-		{};
+		Subsystem(const char *name, int motors[10], int revField[10],
+			const int num, int sensors[10], const char id);
 		void setAll(int speed);
 		void setMotor(const int id, int speed);
 		virtual void debug() = 0;
@@ -19,11 +17,11 @@ class Subsystem {
 		~Subsystem();
 	protected:
 		const char *_name;
-		const int *_motors;
-		const int *_revField;
+		int _motors[10];
+		int _revField[10];
 		const int _num;
-		const int *_sensors;
-		char _id;
+		int _sensors[10];
+		const char _id;
 };
 
 /*

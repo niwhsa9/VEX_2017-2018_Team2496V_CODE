@@ -27,7 +27,7 @@
 #define M_CLAW 6
 
 /* DR4B DEFINES */
-#define A_UNPLUG 0
+#define A_UNPLUG -1000
 #define LOADER_PRESET 418
 #define DR4B_THRESHOLD 5
 #define DR4B_MAX 1395

@@ -6,8 +6,8 @@
 
 class Drive : Subsystem{
     public:
-      Drive(const char *name, const int *motors, const int *revField,
-  			const int num, const int *sensors=(const int *)malloc(1), char id=255):
+      Drive(const char *name, int *motors, int *revField,
+  		int num, int *sensors=(int *)malloc(1), char id=255):
         Subsystem(name, motors, revField, num, _sensors, id)
         {init();};
       void move(float distance, int speed, int direction); //tranverse the z_axis fml
