@@ -22,4 +22,4 @@ But most importantly, we think that we have a lot to learn from PROS, as C/C++ a
  - Have protocols to ensure the safety of our team, other teams, and the robot
  - Use good practice, conform to standards, and document!
 
-In this notebook, we will document our code's structure, the signifigant changes made to the code, algorithms used, and the development process. What we will not include however, is testing data regarding the robot specifically, this can be found in our main notebook. 
+In this notebook, we will document our code's structure, the signifigant changes made to the code, algorithms used, and the development process. What we will not include however, is testing data regarding the robot specifically, this can be found in our main notebook. We also aren't including the full code, as it spans hundreds of lines split into nearly a dozen files. The full code can be found at:

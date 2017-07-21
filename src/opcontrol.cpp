@@ -10,15 +10,14 @@ void operatorControl() {
 	}
 	/* MAIN CONTROL LOOP */
 	while (1) {
-		if(lift->safe()) {  		//Lift P(I)D control
+		if(lift->safe()) {  		//Lift P(I)D control if potentiometers are plugged in
 			lift->iterateCtl();
-		} else { 							//Direct control
+		} else { 							//Direct control otherwise
 			lift->backup();
 		}
 		drive->iterateCtl(); //Direct control
+		claw->iterateCtl(); //Direct control
 
-		claw->iterateCtl(); //Direct control */
-		//printf("alive");
 		delay(10);
 	}
 }//}
