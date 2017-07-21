@@ -14,9 +14,12 @@ Historically, we have used RobotC in 2496, but this year we wanted to try using 
 - Make code more reusable for future years
   - Object oriented design
   - Subsystem based
+- Increase speed of development and testing
 
-We have very specific objetives in mind when it comes to development:
- - Minimize failure at competition
+But most importantly, we think that we have a lot to learn from PROS, as C/C++ are languages that are widely used in the professional software engineering and computer science fields. We have very specific objectives in mind when it comes to development:
+ - Minimize failure at competition (stability)
  - Make code as reusable and readable as possible
  - Have protocols to ensure the safety of our team, other teams, and the robot
  - Use good practice, conform to standards, and document!
+
+In this notebook, we will document our code's structure, the signifigant changes made to the code, algorithms used, and the development process. What we will not include however, is testing data regarding the robot specifically, this can be found in our main notebook. 
