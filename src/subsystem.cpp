@@ -1,4 +1,6 @@
 #include "subsystem.h"
+
+//define unresolved C function __cxa_pure_virtual() with loud behavior
 extern "C" {void __cxa_pure_virtual(){while(1);}}
 
 

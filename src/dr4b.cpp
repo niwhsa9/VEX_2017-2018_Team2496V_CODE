@@ -126,40 +126,45 @@ int DR4B::eStop() {
 * TODO: Integral component
 */
 void DR4B::iterateCtl() {
-  int currentLiftL = getHeight('l') - startLiftL;
+  int currentLiftL = getHeight('l') - startLiftL;                                         //Get lift heights in zeroed potetiometer values
   int currentLiftR = getHeight('r') - startLiftR;
-  if(joystickGetDigital(1,6, JOY_UP)){
+  if(joystickGetDigital(1,6, JOY_UP)){                                                    //Take input as close to fixed sample rate
     if((millis()- prevTime) >= 10) {
       prevTime = millis();
-      desiredLift+=14;
+      desiredLift+=14;                                                                    //Increase desired position when given corresponding input
     }
-  } else if (joystickGetDigital(1,6,JOY_DOWN)){
+  } else if (joystickGetDigital(1,6,JOY_DOWN)){                                           //Take input as close to fixed sample rate
     if((millis() - prevTime) >= 10) {
       prevTime = millis();
-      desiredLift-=14;
+      desiredLift-=14;                                                                    //Decrease desired position when given corresponding input
     }
-  } else if(joystickGetDigital(1,8, JOY_UP) || joystickGetDigital(1,8, JOY_LEFT) ||
+  } else if(joystickGetDigital(1,8, JOY_UP) || joystickGetDigital(1,8, JOY_LEFT) ||       //Set desired position to preset height of cone loader
   joystickGetDigital(1,8, JOY_RIGHT) || joystickGetDigital(1, 8, JOY_DOWN) ){
     if(millis() - prevTime >= 10) {
       prevTime = millis();
       desiredLift = LOADER_PRESET;
     }
   }
-  if(desiredLift > DR4B_MAX) desiredLift = DR4B_MAX;
+  if(desiredLift > DR4B_MAX) desiredLift = DR4B_MAX;                                      //Bounds check, do not try to force lift past physical limit
   else if (desiredLift < 5) desiredLift = 5;
 
-  //liftSpeedR = (lK * (desiredLift-currentLiftR));
-  //liftSpeedL = lK * (desiredLift-currentLiftL);
-  int curErrorR = (desiredLift-currentLiftR);
+  int curErrorR = (desiredLift-currentLiftR);                                             //Calculate error between desired and actual
   int curErrorL = (desiredLift-currentLiftL);
+                                                                                          //Add proportional and derrivitave components for control outpt 
+  liftSpeedR = (lK * curErrorR) + (dK * (curErrorR-prevErrorR));                
 
-  liftSpeedR = (lK * curErrorR) + (dK * (curErrorR-prevErrorR));
-  liftSpeedL = (lK * curErrorL) + (dK * (curErrorL-prevErrorL));
+  liftSpeedL = (lK * curErrorL) + (dK * (curErrorL-prevErrorL));                          /**                                                               **
+                                                                                          * Proportional: constant x error. Apply more correction for larger *
+                                                                                          * error                                                            *
+                                                                                          *------------------------------------------------------------------*                                                 *
+                                                                                          * Derrivitave: constant x instantaneous rate of change.            *
+                                                                                          * Apply more correction with larger change                         *
+                                                                                          **                                                                **/
 
-  prevErrorL = curErrorL;
-  prevErrorR = curErrorR;
+  prevErrorL = curErrorL;                                                                 //Set prevError storage to now used current error information
+  prevErrorR = curErrorR;                       
 
-  setMotor(_br, liftSpeedR);
+  setMotor(_br, liftSpeedR);                                                              //Set motors according to calculated input from PD loop
   setMotor(_bl, liftSpeedL);
   setMotor(_tr, liftSpeedR);
   setMotor(_tl, liftSpeedL);
