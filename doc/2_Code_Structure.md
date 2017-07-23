@@ -1,5 +1,5 @@
 ## TEAM 2496V BHS Robopatty Code Breakdown
-While the specific files will change over time as our robot changes, this shows the general structure and the current state. All code is centered around "Subsystem", an abstract class that defines basic behaviors shared by all subsystems on the robot: drive, lift, claw, etc. It gives generic properties for control and organization. This structure is inspired by FIRST robotics' "Command Based Programming" model. This basic organization shouldn't change much for the remainder of the year, but will be update as needed.
+While the specific files will change over time as our robot changes, this shows the general structure and the current state. All code is centered around "Subsystem", an abstract class that defines the basic behaviors shared by all subsystems on the robot: drive, lift, claw, etc. It gives generic properties for control and organization. This structure is inspired by FIRST robotics' "Command Based Programming" model. This basic organization shouldn't change much for the remainder of the year, but will be update as needed.
 
 **Headers (.h)**
 - *ports.h*
@@ -15,7 +15,7 @@ While the specific files will change over time as our robot changes, this shows 
 - *robot.h*
   - contains references to subsystem instances initialized in init.cpp
 
-**Heads (.h) + Source (.cpp)**
+**Headers (.h) + Source (.cpp)**
   - *DR4B.h + DR4B.cpp*
     - Contains lift subsystem child
     - Controls lift motors through P(ID) loop for auto and driver control
