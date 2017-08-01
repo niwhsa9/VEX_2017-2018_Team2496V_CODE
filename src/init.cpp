@@ -44,7 +44,7 @@ void checkInput() {
     lcdSetText(uart2, 1, "Calibrating Gyro");
     drive->callibrateGyro();
     lcdSetText(uart2, 1, "FINISHED!");
-    delay(200);
+    delay(500);
   } else if (lcdReadButtons(uart2) == 1) autoMode--;
   else if (lcdReadButtons(uart2) == 4) autoMode++;
   else if (lcdReadButtons(uart2) == 7) printf("ALIVE AT %d", powerLevelMain());
@@ -61,12 +61,13 @@ void updateLCD() {
     [G][V][][C][V][][R][V][][L][V][][B][V][V][]
     [<][A][U][T][O][M][O][D][E][>][][][][][][]
     */
-    char *line1, *line2;
-    int cw;
+    char line1[16];
+    char line2[16];
+    int cw = 0;
     //uchar a = (uchar)claw->_sensors[0];
-    imeGet(0, &cw);
+    //imeGet(0, &cw);
     sprintf(
-      line1, "G%d1.0 C%d1.0 L%d1.0 R%d1.0 B%d1.4", gyroGet(drive->gyro),
+      line1, "G%1d C%1d L%1d R%1d B%1d.4", gyroGet(drive->gyro),
       cw, encoderGet(drive->le), encoderGet(drive->re), powerLevelMain()
     );
     sprintf(line2, "<%s>", autoModeStr[autoMode]);
@@ -110,14 +111,16 @@ void initialize() {
   setTeamName("2496V"); //BHS Robopatty V
   //imeInitializeAll(); //REMOVE ME
   subsystemInit();
-/*
+
   lcdInit(uart2);
   lcdSetBacklight(uart2, true);
   lcdClear(uart2);
+  //lcdSetText(uart2, 1, "test");
+
   updateLCD();
   while(!isEnabled()) {
     checkInput();
     updateLCD();
-    delay(20);
-  } */
+    delay(100);
+  }
 }

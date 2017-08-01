@@ -1,5 +1,5 @@
 #include "drive.h"
-const float Drive::zK= 0.0008f;
+const float Drive::zK= 0.00035f;
 const float Drive::tK = 0.98f; //1.0
 
 Drive::Drive(const char *name, int motors[10], int revField[10],
@@ -39,7 +39,7 @@ void Drive::init() {
 */
 void Drive::callibrateGyro() {
   gyroShutdown(gyro);
-  gyro = gyroInit(_sensors[gy], 0);
+  gyro = gyroInit(1, 0);
 }
 
 /*
