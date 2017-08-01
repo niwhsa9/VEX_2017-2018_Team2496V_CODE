@@ -15,7 +15,7 @@ class Drive : Subsystem{
   		void iterateCtl();
   		int eStop();
       void init();
-      void turn(char dir, float deg);
+      void turn(float deg, char dir);
       void callibrateGyro();
       Encoder le;
       Encoder re;

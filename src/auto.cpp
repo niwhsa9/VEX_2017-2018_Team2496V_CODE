@@ -21,7 +21,20 @@ int numAuto = 2;
  * The autonomous task may exit, unlike operatorControl() which should never exit. If it does
  * so, the robot will await a switch to another mode or disable/enable cycle.
  */
-extern "C" {
+
   void autonomous() {
+      if(autoMode == 0) {
+        /*
+        drive->turn(181, 1);
+        delay(5000);
+        drive->move(36, 100, 1); */
+        drive->move(36, 100, 1);
+        drive->turn(90, -1);
+        drive->move(36, 100, 1);
+        drive->turn(90, -1);
+        drive->move(36, 100, 1);
+        drive->turn(90, -1);
+        drive->move(36, 100, 1);
+        drive->turn(90, -1);
+      }
   }
-}

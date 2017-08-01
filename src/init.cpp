@@ -15,20 +15,20 @@ void subsystemInit() {
 
   //while(1) printf("%d", liftRev[2]);
   int liftSensors[10] = {A_LIFT_POT_L, A_LIFT_POT_R};
-  lift = new DR4B("Double Reverse Four Bar", liftMotors, liftRev, 4, liftSensors, 0);
+  lift = new DR4B("", liftMotors, liftRev, 4, liftSensors, 0);
   lift->init();
 
   //HERE DOWN BROKEN
   int driveMotors[10] = {M_DRIVE_FR, M_DRIVE_BR, M_DRIVE_FL, M_DRIVE_BL};
   int driveRev[10] = {-1, -1, 1, 1};
   int driveSensors[10] = {D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, A_DRIVE_GYRO};
-  drive = new Drive("Drive", driveMotors, driveRev, 4, driveSensors, 1); //4 ports, 6 motors
+  drive = new Drive("", driveMotors, driveRev, 4, driveSensors, 1); //4 ports, 6 motors
   drive->init();
 
   int clawMotors[] = {M_CLAW};
   int clawRev[] = {1};
   int clawSensors[] = {I2C_CLAW_ENC};
-  claw = new Claw("Claw", clawMotors, clawRev, 1, clawSensors, 2);
+  claw = new Claw("", clawMotors, clawRev, 1, clawSensors, 2);
   claw->init();
   isSubInit = true;
 }
@@ -108,9 +108,9 @@ void initialize() {
   //printf("starting");
 
   setTeamName("2496V"); //BHS Robopatty V
-  imeInitializeAll();
+  //imeInitializeAll(); //REMOVE ME
   subsystemInit();
-
+/*
   lcdInit(uart2);
   lcdSetBacklight(uart2, true);
   lcdClear(uart2);
@@ -119,5 +119,5 @@ void initialize() {
     checkInput();
     updateLCD();
     delay(20);
-  }
+  } */
 }

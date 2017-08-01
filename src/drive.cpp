@@ -1,6 +1,6 @@
 #include "drive.h"
-const float Drive::zK= 0.2f;
-const float Drive::tK = 0.05f;
+const float Drive::zK= 0.0008f;
+const float Drive::tK = 0.98f; //1.0
 
 Drive::Drive(const char *name, int motors[10], int revField[10],
 int num, int sensors[10], char id=255):
@@ -24,9 +24,12 @@ void Drive::init() {
   er2 = 3;
   gy = 4;
 
-  le = encoderInit(_sensors[el1], _sensors[el2], false);
-  re = encoderInit(_sensors[er1], _sensors[er2], true);
-  gyro = gyroInit(_sensors[gy], 0);
+  le = encoderInit(D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, false);
+  re = encoderInit(D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, true); //CHANGE FROM HARDCODE
+  gyro = gyroInit(1, 0);
+
+  //zK = 0.2;
+  //tK = 0.2;
 }
 
 /*
@@ -41,18 +44,18 @@ void Drive::callibrateGyro() {
 
 /*
 * Move robot specified distance and direction through
-* encoder count (SLEW). Take input parameter of distance 
+* encoder count (SLEW). Take input parameter of distance
 * in inches and speed
 */
 void Drive::move(float distance, int speed, int direction) {
   //Reset Encoders & initalize variables needed
-  encoderReset(le);                                              
+  encoderReset(le);
   encoderReset(re);
   int v_le = 0;
   int v_re = 0;
-  int lSpeed = 0;
-  int rSpeed = 0;
- 
+  float lSpeed = 0;
+  float rSpeed = 0;
+
   float ticks = (distance/(4*PI)) *  360; //distance/circumfrence = revolutions needed
                                           //360 ticks per revolution * revolutions needed = ticks
 
@@ -61,54 +64,61 @@ void Drive::move(float distance, int speed, int direction) {
       //Update current encoder values
       v_le = abs(encoderGet(le));
       v_re = abs(encoderGet(re));
-
+      printf("r: %f   d: %f", rSpeed, ticks);
       //Speed is proportional to distance from target, so it stops without roll at the target
-      lSpeed = (ticks-v_le) * speed * direction;
-      rSpeed = (ticks-v_re) * speed * direction;
-
+      if(v_le >= ticks/3) { //REMOVE
+        lSpeed = (ticks-v_le) * speed * direction * zK;
+        rSpeed = (ticks-v_re) * speed * direction * zK;
+      } else {
+        lSpeed = speed * direction;
+        rSpeed = speed * direction;
+      }
       //If speed falls below certain values, motors will stall without movement, stop this
       if(abs(lSpeed) <= DRIVE_MIN_SPEED) lSpeed = DRIVE_MIN_SPEED * direction;
       if(abs(rSpeed) <= DRIVE_MIN_SPEED) rSpeed = DRIVE_MIN_SPEED * direction;
 
-      //Set motors accordingly 
-      setMotor(_bl, lSpeed);
-      setMotor(_br, rSpeed);
-      setMotor(_fr, rSpeed);
-      setMotor(_fl, lSpeed);
+      //Set motors accordingly
+      setMotor(_bl, (int)lSpeed);
+      setMotor(_br, (int)rSpeed);
+      setMotor(_fr, (int)rSpeed);
+      setMotor(_fl, (int)lSpeed);
+      delay(10);
   }
   setAll(0); //Disable motors
-}
+  }
 
 /*
 * Turn robot specified angle in degrees. Direction is 1 for positive, -1 for negative
 */
-void Drive::turn(char direction, float degrees) {
+void Drive::turn(float degrees, char direction) {
   //Reset gyro & initalize variables
   gyroReset(gyro);
-  int lSpeed = 0;
-  int rSpeed = 0;
+  float lSpeed = 0;
+  float rSpeed = 0;
   int integ_gyro = 0;
 
   //Check robot isn't at target within a threshold
   while(abs(integ_gyro - degrees) > DRIVE_TURN_THRESHOLD) {
       //Grab integrated gyro value from PROS library
-      integ_gyro = gyroGet(gyro);
-      
+      integ_gyro = abs(gyroGet(gyro));
+      printf("gyro: %d", integ_gyro);
       //Speed is proportional to distance from target, so it stops without roll at the target
-      lSpeed = (degrees-integ_gyro) * direction;
-      rSpeed = lSpeed * -1;
+      lSpeed = (degrees-integ_gyro) * tK * direction;
+      rSpeed = lSpeed * -1 * tK;
 
       //If speed falls below certain values, motors will stall without movement, stop this
-      if(abs(lSpeed) <=DRIVE_MIN_SPEED) lSpeed = DRIVE_MIN_SPEED * direction; 
-      if(abs(rSpeed) <= DRIVE_MIN_SPEED) rSpeed = DRIVE_MIN_SPEED * direction;
+      if(abs(lSpeed) <=TURN_MIN_SPEED) lSpeed = TURN_MIN_SPEED * direction;
+      if(abs(rSpeed) <= TURN_MIN_SPEED) rSpeed = TURN_MIN_SPEED * direction * -1;
 
-      //Set motors accordingly 
-      setMotor(_bl, lSpeed);
-      setMotor(_br, rSpeed);
-      setMotor(_fr, rSpeed);
-      setMotor(_fl, lSpeed);
+      //Set motors accordingly
+      setMotor(_bl, (int)lSpeed);
+      setMotor(_br, (int)rSpeed);
+      setMotor(_fr, (int)rSpeed);
+      setMotor(_fl, (int)lSpeed);
+      delay(10);
   }
   setAll(0);  //Disable motors
+
 }
 
 /*
