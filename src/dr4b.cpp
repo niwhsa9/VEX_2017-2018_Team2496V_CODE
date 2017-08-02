@@ -37,6 +37,7 @@ void DR4B::init() {
   _br = 1;
   _tl = 2;
   _bl = 3;
+  prevOpComplete = true;
 }
 
 /*
@@ -44,7 +45,15 @@ void DR4B::init() {
 * and iterateCtl()
 */
 void DR4B::setDesired(int position) {
+  prevOpComplete = false;
   desiredLift = position;
+}
+
+void DR4B::unpack() {
+  setDesired(435);
+  while(!prevOpComplete) moveTo();
+  setDesired(15);
+  while(!prevOpComplete) moveTo();
 }
 
 /*
@@ -57,9 +66,11 @@ void DR4B::moveTo() { //change position to percentage?
   int currentLiftR=0;
   prevErrorL = 0;
   prevErrorR = 0;
-  while(abs(currentLiftR-desiredLift) >= DR4B_THRESHOLD && abs(currentLiftL-desiredLift) >= DR4B_THRESHOLD) {
+//  while(/*abs(currentLiftR-desiredLift) >= DR4B_THRESHOLD && abs(currentLiftL-desiredLift) >= DR4B_THRESHOLD*/1) {
+
     currentLiftL = getHeight('l') - startLiftL;
     currentLiftR = getHeight('r') - startLiftR;
+      printf("debug %d", currentLiftL);
 
     int curErrorR = (desiredLift-currentLiftR);
     int curErrorL = (desiredLift-currentLiftL);
@@ -74,7 +85,11 @@ void DR4B::moveTo() { //change position to percentage?
     setMotor(_bl, liftSpeedL);
     setMotor(_tr, liftSpeedR);
     setMotor(_tl, liftSpeedL);
-  }
+
+    if(abs(currentLiftL-desiredLift) <= DR4B_THRESHOLD) prevOpComplete = true;
+
+    //delay(10);
+//  }
 }
 
 /*
@@ -150,8 +165,8 @@ void DR4B::iterateCtl() {
 
   int curErrorR = (desiredLift-currentLiftR);                                             //Calculate error between desired and actual
   int curErrorL = (desiredLift-currentLiftL);
-                                                                                          //Add proportional and derrivitave components for control outpt 
-  liftSpeedR = (lK * curErrorR) + (dK * (curErrorR-prevErrorR));                
+                                                                                          //Add proportional and derrivitave components for control outpt
+  liftSpeedR = (lK * curErrorR) + (dK * (curErrorR-prevErrorR));
 
   liftSpeedL = (lK * curErrorL) + (dK * (curErrorL-prevErrorL));                          /**                                                               **
                                                                                           * Proportional: constant x error. Apply more correction for larger *
@@ -162,7 +177,7 @@ void DR4B::iterateCtl() {
                                                                                           **                                                                **/
 
   prevErrorL = curErrorL;                                                                 //Set prevError storage to now used current error information
-  prevErrorR = curErrorR;                       
+  prevErrorR = curErrorR;
 
   setMotor(_br, liftSpeedR);                                                              //Set motors according to calculated input from PD loop
   setMotor(_bl, liftSpeedL);

@@ -1,5 +1,5 @@
 #include "drive.h"
-const float Drive::zK= 0.0008f;
+const float Drive::zK= 0.00035f;
 const float Drive::tK = 0.98f; //1.0
 
 Drive::Drive(const char *name, int motors[10], int revField[10],
@@ -39,7 +39,7 @@ void Drive::init() {
 */
 void Drive::callibrateGyro() {
   gyroShutdown(gyro);
-  gyro = gyroInit(_sensors[gy], 0);
+  gyro = gyroInit(1, 0);
 }
 
 /*
@@ -64,7 +64,7 @@ void Drive::move(float distance, int speed, int direction) {
       //Update current encoder values
       v_le = abs(encoderGet(le));
       v_re = abs(encoderGet(re));
-      printf("r: %f   d: %f", rSpeed, ticks);
+    //  printf("r: %f   d: %f", rSpeed, ticks);
       //Speed is proportional to distance from target, so it stops without roll at the target
       if(v_le >= ticks/3) { //REMOVE
         lSpeed = (ticks-v_le) * speed * direction * zK;
@@ -101,7 +101,7 @@ void Drive::turn(float degrees, char direction) {
   while(abs(integ_gyro - degrees) > DRIVE_TURN_THRESHOLD) {
       //Grab integrated gyro value from PROS library
       integ_gyro = abs(gyroGet(gyro));
-      printf("gyro: %d", integ_gyro);
+      //printf("gyro: %d", integ_gyro);
       //Speed is proportional to distance from target, so it stops without roll at the target
       lSpeed = (degrees-integ_gyro) * tK * direction;
       rSpeed = lSpeed * -1 * tK;

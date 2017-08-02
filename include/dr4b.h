@@ -16,6 +16,8 @@ class DR4B : Subsystem{
       void init();
       bool safe();
       void setDesired(int position);
+      void unpack();
+      bool prevOpComplete;
 
     private:
       int getHeight(char h);
