@@ -17,10 +17,12 @@ class DR4B : Subsystem{
       bool safe();
       void setDesired(int position);
       void unpack();
+      int getHeight(char h);
       bool prevOpComplete;
+      bool safety;
 
     private:
-      int getHeight(char h);
+
 
       //Starting potentiometer values for each side of the lift
       int startLiftL;

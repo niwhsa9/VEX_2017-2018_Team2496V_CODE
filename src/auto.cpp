@@ -2,7 +2,7 @@
 #include "ports.h"
 #include "robot.h"
 
-int autoMode = 0;
+int autoMode = 1; //0
 const char *autoModeStr[] = {
   "Primary", "Secondary"
 };
@@ -24,33 +24,43 @@ bool unpacked = false;
 
   void autonomous() {
       if(autoMode == 0) {
-        TaskHandle lftTsk = taskCreate(unpack, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
+        TaskHandle upckTsk = taskCreate(unpack, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
+        TaskHandle lftTsk = taskCreate(liftCtl, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
+        delay(500);
         drive->move(48, 127, -1);
+        lift->setDesired(450);
+        delay(300);
+        drive->move(36, 127, 1);
+        drive->turn(180, 100, 1);
+        drive->move(30, 127, -1);
+        lift->setDesired(10);
+        delay(300);
+        drive->move(24, 127, 1);
+
+        //drive->turn(180, -1);
+        taskDelete(upckTsk);
         taskDelete(lftTsk);
-        lftTsk = taskCreate(liftCtl, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
 
-        delay(5000);
-
-        //taskDelete(scheduler);
-        /*
-
-        drive->move(36, 100, 1);
-
+      } else if(autoMode == 1) {
+        TaskHandle upckTsk = taskCreate(unpack, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
+        TaskHandle lftTsk = taskCreate(liftCtl, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
         delay(500);
-        drive->turn(90, -1);
-        delay(500);
-        drive->move(36, 100, 1);
-          delay(500);
-        drive->turn(90, -1);
-        delay(500);
-        drive->move(36, 100, 1);
-          delay(500);
-        drive->turn(90, -1);
-        delay(500);
-        drive->move(36, 100, 1);
-          delay(500);
-        drive->turn(90, -1);  */
-
         drive->move(48, 127, -1);
+        lift->setDesired(450);
+        delay(300);
+        drive->move(36, 127, 1);
+        drive->turn(135, 100, 1);
+        drive->move(12, 50, 1);
+        drive->turn(90, 60, 1);
+        /*
+        drive->move(14, 127, -1);
+        drive->turn(45, 70, -1);
+        drive->move(18, 40, -1);
+        drive->turn(90, 127, 1);
+        */
+
+        //drive->turn(180, -1);
+        taskDelete(upckTsk);
+        taskDelete(lftTsk);
       }
   }

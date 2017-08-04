@@ -38,6 +38,7 @@ void DR4B::init() {
   _tl = 2;
   _bl = 3;
   prevOpComplete = true;
+  safety = false;
 }
 
 /*
@@ -52,8 +53,12 @@ void DR4B::setDesired(int position) {
 void DR4B::unpack() {
   setDesired(435);
   while(!prevOpComplete) moveTo();
-  setDesired(15);
-  while(!prevOpComplete) moveTo();
+  setDesired(50);
+  while(!prevOpComplete) {
+    //printf("height %d", getHeight('l'));
+    moveTo();
+  }
+
 }
 
 /*
@@ -86,8 +91,10 @@ void DR4B::moveTo() { //change position to percentage?
     setMotor(_tr, liftSpeedR);
     setMotor(_tl, liftSpeedL);
 
-    if(abs(currentLiftL-desiredLift) <= DR4B_THRESHOLD) prevOpComplete = true;
-
+    if(abs(currentLiftL-desiredLift) <= DR4B_THRESHOLD) {
+      prevOpComplete = true;
+      setAll(0);
+    }
     //delay(10);
 //  }
 }
@@ -97,7 +104,7 @@ void DR4B::moveTo() { //change position to percentage?
 * are functional
 */
 bool DR4B::safe() {
-  if(getHeight('l') != A_UNPLUG && getHeight('r') != A_UNPLUG) {
+  if(getHeight('l') != A_UNPLUG && getHeight('r') != A_UNPLUG && safety != true) {
     return true;
   } else return false;
 }
@@ -141,6 +148,7 @@ int DR4B::eStop() {
 * TODO: Integral component
 */
 void DR4B::iterateCtl() {
+  if(joystickGetDigital(1, 7, JOY_LEFT)) safety = true;
   int currentLiftL = getHeight('l') - startLiftL;                                         //Get lift heights in zeroed potetiometer values
   int currentLiftR = getHeight('r') - startLiftR;
   if(joystickGetDigital(1,6, JOY_UP)){                                                    //Take input as close to fixed sample rate

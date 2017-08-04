@@ -14,8 +14,10 @@ void operatorControl() {
 	/* MAIN CONTROL LOOP */
 	while (1) {
 		curTime = millis();
+
 		if(lift->safe()) {  		//Lift P(I)D control if potentiometers are plugged in
 			lift->iterateCtl();
+      //printf("left: %d right %d,\n", lift->getHeight('l'), lift->getHeight('r'));
 		} else { 							//Direct control otherwise
 			lift->backup();
 		}

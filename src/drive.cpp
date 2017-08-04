@@ -90,7 +90,7 @@ void Drive::move(float distance, int speed, int direction) {
 /*
 * Turn robot specified angle in degrees. Direction is 1 for positive, -1 for negative
 */
-void Drive::turn(float degrees, char direction) {
+void Drive::turn(float degrees, int speed, char direction) {
   //Reset gyro & initalize variables
   gyroReset(gyro);
   float lSpeed = 0;
@@ -103,7 +103,7 @@ void Drive::turn(float degrees, char direction) {
       integ_gyro = abs(gyroGet(gyro));
       //printf("gyro: %d", integ_gyro);
       //Speed is proportional to distance from target, so it stops without roll at the target
-      lSpeed = (degrees-integ_gyro) * tK * direction;
+      lSpeed = (degrees-integ_gyro) * tK * direction * (speed/127.0);
       rSpeed = lSpeed * -1 * tK;
 
       //If speed falls below certain values, motors will stall without movement, stop this
