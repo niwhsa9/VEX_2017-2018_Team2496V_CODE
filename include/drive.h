@@ -10,6 +10,7 @@ class Drive : Subsystem{
   		int num, int sensors[10], char id);
 
       void move(float distance, int speed, int direction); //tranverse the z_axis fml
+      void f_move(float distance, int speed, int direction);
       //rename that sheet ^^^
   		void debug();
   		void iterateCtl();

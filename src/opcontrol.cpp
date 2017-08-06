@@ -20,6 +20,7 @@ void operatorControl() {
       //printf("left: %d right %d,\n", lift->getHeight('l'), lift->getHeight('r'));
 		} else { 							//Direct control otherwise
 			lift->backup();
+        printf("left: %d right %d,\n", lift->getHeight('l'), lift->getHeight('r'));
 		}
 		drive->iterateCtl(); //Direct control
 		claw->iterateCtl(); //Direct control

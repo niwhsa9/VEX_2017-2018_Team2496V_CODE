@@ -87,6 +87,27 @@ void Drive::move(float distance, int speed, int direction) {
   setAll(0); //Disable motors
   }
 
+void Drive::f_move(float distance, int speed, int direction) {
+  //Reset Encoders & initalize variables needed
+  encoderReset(le);
+  encoderReset(re);
+  int v_le = 0;
+  int v_re = 0;
+
+
+  float ticks = (distance/(4*PI)) *  360; //distance/circumfrence = revolutions needed
+                                          //360 ticks per revolution * revolutions needed = ticks
+  setAll(speed*direction);
+  while(abs(ticks-v_le) >= DRIVE_MOVE_THRESHOLD) {
+    v_le = abs(encoderGet(le));
+    v_re = abs(encoderGet(re));
+    continue;
+  }
+  setAll(-10 * direction);
+  delay(200);
+  setAll(0);
+}
+
 /*
 * Turn robot specified angle in degrees. Direction is 1 for positive, -1 for negative
 */

@@ -129,8 +129,8 @@ void DR4B::backup() {
 * Debug
 */
 void DR4B::debug() {
-  printf("LEFT %d", getHeight('l')-startLiftL);
-  printf("RIGHT %d", getHeight('r')-startLiftR);
+  printf("LEFT %d \n", getHeight('l')-startLiftL);
+  printf("RIGHT %d \n", getHeight('r')-startLiftR);
 }
 
 /*

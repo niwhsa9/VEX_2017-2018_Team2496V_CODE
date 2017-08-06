@@ -48,10 +48,16 @@ bool unpacked = false;
         drive->move(48, 127, -1);
         lift->setDesired(450);
         delay(300);
-        drive->move(36, 127, 1);
+        drive->move(44, 127, 1); //42
         drive->turn(135, 100, 1);
-        drive->move(12, 50, 1);
-        drive->turn(90, 60, 1);
+        drive->move(20, 50, -1);
+        drive->turn(45, 60, 1);
+        drive->move(6, 40, -1); //6
+        drive->turn(37, 60, 1); //45
+
+        drive->f_move(15, 127, -1); //overload
+        lift->setDesired(0);
+        drive->f_move(20, 127, 1);
         /*
         drive->move(14, 127, -1);
         drive->turn(45, 70, -1);
