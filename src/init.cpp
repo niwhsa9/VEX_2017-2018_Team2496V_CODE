@@ -114,20 +114,14 @@ void initializeIO() {
 
 
 void initialize() {
-  //printf("starting");
-
-  setTeamName("2496V"); //BHS Robopatty V
-  //imeInitializeAll(); //REMOVE ME
-  subsystemInit();
-
-  lcdInit(uart2);
-  lcdSetBacklight(uart2, true);
-  lcdClear(uart2);
-  //lcdSetText(uart2, 1, "test");
-
-  updateLCD();
-  while(!isEnabled()) {
-    //printf("%d \n", page);
+  setTeamName("2496V");              //BHS Robopatty V :D
+  subsystemInit();                   //Initalize subsystems for autonomous
+  lcdInit(uart2);                    //Initalize LCD display
+  lcdSetBacklight(uart2, true);      //Enable the backlight to make text more visible 
+  lcdClear(uart2);                   //Clear any bargled text or weirdness
+  updateLCD();                      
+  while(!isEnabled()) {              //Routinely update LCD values and check for USER
+                                     //input on the buttons while pre-auton is active
     checkInput();
     updateLCD();
     delay(100);
