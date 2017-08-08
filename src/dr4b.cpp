@@ -176,7 +176,9 @@ void DR4B::iterateCtl() {
                                                                                           //Add proportional and derrivitave components for control outpt
   liftSpeedR = (lK * curErrorR) + (dK * (curErrorR-prevErrorR));
 
-  liftSpeedL = (lK * curErrorL) + (dK * (curErrorL-prevErrorL));                          /**                                                               **
+  liftSpeedL = liftSpeedR;
+  //liftSpeedL = (lK * curErrorL) + (dK * (curErrorL-prevErrorL));
+                                                                                          /**                                                               **
                                                                                           * Proportional: constant x error. Apply more correction for larger *
                                                                                           * error                                                            *
                                                                                           *------------------------------------------------------------------*                                                 *

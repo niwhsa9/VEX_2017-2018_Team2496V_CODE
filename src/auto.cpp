@@ -48,7 +48,8 @@ bool unpacked = false;
         drive->move(48, 127, -1);
         lift->setDesired(450);
         delay(300);
-        drive->move(44, 127, 1); //42
+        //delay(3000); //REMOVE ME
+        drive->move(48, 127, 1); //44
         drive->turn(135, 100, 1);
         drive->move(20, 50, -1);
         drive->turn(45, 60, 1);
@@ -58,14 +59,8 @@ bool unpacked = false;
         drive->f_move(15, 127, -1); //overload
         lift->setDesired(0);
         drive->f_move(20, 127, 1);
-        /*
-        drive->move(14, 127, -1);
-        drive->turn(45, 70, -1);
-        drive->move(18, 40, -1);
-        drive->turn(90, 127, 1);
-        */
 
-        //drive->turn(180, -1);
+
         taskDelete(upckTsk);
         taskDelete(lftTsk);
       }
