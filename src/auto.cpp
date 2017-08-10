@@ -42,6 +42,8 @@ bool unpacked = false;
         taskDelete(lftTsk);
 
       } else if(autoMode == 1) {
+      //  drive->move(48, 127, 1, 5000);
+
         TaskHandle upckTsk = taskCreate(unpack, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
         TaskHandle lftTsk = taskCreate(liftCtl, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
         delay(500);
@@ -49,14 +51,14 @@ bool unpacked = false;
         lift->setDesired(450);
         delay(300);
         //delay(3000); //REMOVE ME
-        drive->move(48, 127, 1); //44
-        drive->turn(135, 100, 1);
-        drive->move(20, 50, -1);
+        drive->move(47, 127, 1);
+        drive->turn(140, 100, 1); //140
+        drive->move(20, 50, -1, 2500); //25k
         drive->turn(45, 60, 1);
         drive->move(6, 40, -1); //6
         drive->turn(37, 60, 1); //45
 
-        drive->f_move(15, 127, -1); //overload
+        drive->f_move(23, 127, -1); //overload
         lift->setDesired(0);
         drive->f_move(20, 127, 1);
 

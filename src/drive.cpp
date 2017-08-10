@@ -108,6 +108,47 @@ void Drive::f_move(float distance, int speed, int direction) {
   setAll(0);
 }
 
+void Drive::move(float distance, int speed, int direction, unsigned int max_time) {
+  //Reset Encoders & initalize variables needed
+  encoderReset(le);
+  encoderReset(re);
+  int v_le = 0;
+  int v_re = 0;
+  float lSpeed = 0;
+  float rSpeed = 0;
+  unsigned int startTime = millis();
+
+  float ticks = (distance/(4*PI)) *  360; //distance/circumfrence = revolutions needed
+                                          //360 ticks per revolution * revolutions needed = ticks
+
+  //Check that robot isn't at the target within a threshold
+  while((abs(ticks-v_le) >= DRIVE_MOVE_THRESHOLD && abs(ticks-v_re) >= DRIVE_MOVE_THRESHOLD) &&  millis()-startTime < max_time) {
+      //Update current encoder values
+      v_le = abs(encoderGet(le));
+      v_re = abs(encoderGet(re));
+    //  printf("r: %f   d: %f", rSpeed, ticks);
+      //Speed is proportional to distance from target, so it stops without roll at the target
+      if(v_le >= ticks/3) { //REMOVE
+        lSpeed = (ticks-v_le) * speed * direction * zK;
+        rSpeed = (ticks-v_re) * speed * direction * zK;
+      } else {
+        lSpeed = speed * direction;
+        rSpeed = speed * direction;
+      }
+      //If speed falls below certain values, motors will stall without movement, stop this
+      if(abs(lSpeed) <= DRIVE_MIN_SPEED) lSpeed = DRIVE_MIN_SPEED * direction;
+      if(abs(rSpeed) <= DRIVE_MIN_SPEED) rSpeed = DRIVE_MIN_SPEED * direction;
+
+      //Set motors accordingly
+      setMotor(_bl, (int)lSpeed);
+      setMotor(_br, (int)rSpeed);
+      setMotor(_fr, (int)rSpeed);
+      setMotor(_fl, (int)lSpeed);
+      delay(10);
+  }
+  setAll(0); //Disable motors
+}
+
 /*
 * Turn robot specified angle in degrees. Direction is 1 for positive, -1 for negative
 */
