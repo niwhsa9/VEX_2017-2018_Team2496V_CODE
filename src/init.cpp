@@ -19,7 +19,6 @@ void subsystemInit() {
   lift = new DR4B("", liftMotors, liftRev, 4, liftSensors, 0);
   lift->init();
 
-  //HERE DOWN BROKEN
   int driveMotors[10] = {M_DRIVE_FR, M_DRIVE_BR, M_DRIVE_FL, M_DRIVE_BL};
   int driveRev[10] = {-1, -1, 1, 1};
   int driveSensors[10] = {D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, A_DRIVE_GYRO};
@@ -90,7 +89,7 @@ void updateLCD() {
           break;
         case 4:
           sprintf(line1, "< Auto Mode >");
-          sprintf(line2, "<| %s |>", autoModeStr[autoMode]);
+          sprintf(line2, "<|%s|>", autoModeStr[autoMode]);
           break;
         default:
           sprintf(line1, "BROKEN");
@@ -117,13 +116,14 @@ void initialize() {
   setTeamName("2496V");              //BHS Robopatty V :D
   subsystemInit();                   //Initalize subsystems for autonomous
   lcdInit(uart2);                    //Initalize LCD display
-  lcdSetBacklight(uart2, true);      //Enable the backlight to make text more visible 
+  lcdSetBacklight(uart2, true);      //Enable the backlight to make text more visible
   lcdClear(uart2);                   //Clear any bargled text or weirdness
-  updateLCD();                      
+  updateLCD();
   while(!isEnabled()) {              //Routinely update LCD values and check for USER
                                      //input on the buttons while pre-auton is active
     checkInput();
     updateLCD();
+  //  printf("page %d \n", page);
     delay(100);
   }
 }

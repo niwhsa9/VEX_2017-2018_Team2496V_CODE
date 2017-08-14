@@ -14,6 +14,7 @@ class Claw: Subsystem{
   		void iterateCtl();
   		int eStop();
       void init();
+      void hold();
 
     private:
       //drive ports

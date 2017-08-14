@@ -16,9 +16,13 @@ void Claw::init() {
 }
 
 void Claw::setDesired(int des) {
+  setMotor(0, des);
   desired = des;
 }
 
+void Claw::hold() {
+  setMotor(0, 30);
+}
 /*
 * Move claw to value speified by desired
 * start on seperate thread for continious control
