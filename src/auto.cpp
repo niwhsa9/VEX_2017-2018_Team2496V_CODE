@@ -2,11 +2,11 @@
 #include "ports.h"
 #include "robot.h"
 
-int autoMode = 3; //0
+int autoMode = 2; //0
 const char *autoModeStr[] = {
-  "10 Mob G", "20 Mob G L", "20 Mob G R", "Avoid"
+  "10 Mob G", "20 Mob G L", "20 Mob G R", "Avoid R", "Avoid L",
 };
-int numAuto = 4;
+int numAuto = 5;
 
 bool unpacked = false;
 
@@ -83,7 +83,9 @@ bool unpacked = false;
         taskDelete(upckTsk);
         taskDelete(lftTsk);
       }
-      else if(autoMode == 3) {
+      else if(autoMode == 3 || autoMode == 4) {
+        int dir = 1;
+        if(autoMode == 4) dir = -1;
         claw->setDesired(127);
         //claw->hold();
         drive->move(6, 50, 1);
@@ -103,7 +105,7 @@ bool unpacked = false;
         //while(!lift->prevOpComplete);
         claw->setDesired(0);
         drive->move(6, 50, -1);
-        drive->turn(100, 100, -1);
+        drive->turn(100, 100, -1 * dir);
         lift->setDesired(50);
         drive->f_move(65, 127, -1);
 
