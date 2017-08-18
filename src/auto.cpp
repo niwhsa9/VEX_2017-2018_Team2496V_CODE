@@ -2,7 +2,7 @@
 #include "ports.h"
 #include "robot.h"
 
-int autoMode = 2; //0
+int autoMode = 1; //0
 const char *autoModeStr[] = {
   "10 Mob G", "20 Mob G L", "20 Mob G R", "Avoid R", "Avoid L",
 };
@@ -50,8 +50,8 @@ bool unpacked = false;
         delay(300);
         //delay(3000); //REMOVE ME
         drive->move(47, 127, 1);
-        drive->turn(140, 100, 1); //140
-        drive->move(20, 50, -1, 2500); //25k
+        drive->turn(137, 100, 1); //140
+        drive->move(27, 50, -1, 2500); //20
         drive->turn(45, 60, 1);
         drive->move(6, 40, -1); //6
         drive->turn(37, 60, 1); //45
@@ -72,8 +72,8 @@ bool unpacked = false;
         lift->setDesired(450);
         delay(300);
         drive->move(47, 127, 1);
-        drive->turn(140, 100, -1); //140
-        drive->move(20, 50, -1, 2500); //25k
+        drive->turn(137, 100, -1); //140
+        drive->move(27, 50, -1, 2500); //25k
         drive->turn(45, 60, -1);
         drive->move(6, 40, -1); //6
         drive->turn(37, 60, -1); //45
