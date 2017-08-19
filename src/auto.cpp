@@ -42,16 +42,18 @@ bool unpacked = false;
         taskDelete(lftTsk);
 
       } else if(autoMode == 1) {
+        claw->setDesired(127);
         TaskHandle upckTsk = taskCreate(unpack, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
         TaskHandle lftTsk = taskCreate(liftCtl, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
         delay(500);
+        claw->setDesired(30);
         drive->move(48, 127, -1);
         lift->setDesired(450);
         delay(300);
         //delay(3000); //REMOVE ME
         drive->move(47, 127, 1);
         drive->turn(137, 100, 1); //140
-        drive->move(27, 50, -1, 2500); //20
+        drive->move(24, 50, -1, 2500); //20
         drive->turn(45, 60, 1);
         drive->move(6, 40, -1); //6
         drive->turn(37, 60, 1); //45
@@ -65,15 +67,17 @@ bool unpacked = false;
         taskDelete(lftTsk);
       }
       else if(autoMode == 2) {
+        claw->setDesired(127);
         TaskHandle upckTsk = taskCreate(unpack, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
         TaskHandle lftTsk = taskCreate(liftCtl, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
         delay(500);
+        claw->setDesired(30);
         drive->move(48, 127, -1);
         lift->setDesired(450);
         delay(300);
         drive->move(47, 127, 1);
         drive->turn(137, 100, -1); //140
-        drive->move(27, 50, -1, 2500); //25k
+        drive->move(24, 50, -1, 2500); //25k
         drive->turn(45, 60, -1);
         drive->move(6, 40, -1); //6
         drive->turn(37, 60, -1); //45
