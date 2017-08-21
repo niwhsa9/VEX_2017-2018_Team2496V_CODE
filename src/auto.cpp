@@ -4,9 +4,9 @@
 
 int autoMode = 1; //0
 const char *autoModeStr[] = {
-  "10 Mob G", "20 Mob G L", "20 Mob G R", "Avoid R", "Avoid L",
+  "10 Mob G", "20 Mob G L", "20 Mob G R", "Avoid R", "Avoid L", "5 Mob G L"
 };
-int numAuto = 5;
+int numAuto = 6;
 
 bool unpacked = false;
 
@@ -116,5 +116,7 @@ bool unpacked = false;
         delay(2000);
         taskDelete(upckTsk);
         taskDelete(lftTsk);
+      } else if(autoMode == 5) {
+
       }
   }
