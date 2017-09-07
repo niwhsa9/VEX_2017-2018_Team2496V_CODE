@@ -38,8 +38,9 @@ bool unpacked = false;
         drive->move(24, 127, 1);
 
         //drive->turn(180, -1);
-        taskDelete(upckTsk);
+        //taskDelete(upckTsk);
         taskDelete(lftTsk);
+	      delay(10000);
 
       } else if(autoMode == 1) {
         claw->setDesired(127);
@@ -61,10 +62,8 @@ bool unpacked = false;
         drive->f_move(23, 127, -1); //overload
         lift->setDesired(0);
         drive->f_move(20, 127, 1);
-
-
-        taskDelete(upckTsk);
         taskDelete(lftTsk);
+        //taskDelete(upckTsk);
       }
       else if(autoMode == 2) {
         claw->setDesired(127);
@@ -84,21 +83,21 @@ bool unpacked = false;
         drive->f_move(23, 127, -1); //overload
         lift->setDesired(0);
         drive->f_move(20, 127, 1);
-        taskDelete(upckTsk);
         taskDelete(lftTsk);
+	      delay(10000);
       }
       else if(autoMode == 3 || autoMode == 4) {
         int dir = 1;
         if(autoMode == 4) dir = -1;
         claw->setDesired(127);
         //claw->hold();
+        delay(500);
         drive->move(6, 50, 1);
         TaskHandle upckTsk = taskCreate(unpack, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
         TaskHandle lftTsk = taskCreate(liftCtl, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
         delay(1000);
         claw->hold();
         lift->setDesired(1100);
-        delay(500);
         drive->move(7 , 50, 1);
         lift->setDesired(800);
       //  while(!lift->prevOpComplete);
@@ -114,9 +113,11 @@ bool unpacked = false;
         drive->f_move(65, 127, -1);
 
         delay(2000);
-        taskDelete(upckTsk);
         taskDelete(lftTsk);
+	       delay(10000);
       } else if(autoMode == 5) {
 
-      }
+      } else delay(10000);
+      autoMode = -1;
+
   }

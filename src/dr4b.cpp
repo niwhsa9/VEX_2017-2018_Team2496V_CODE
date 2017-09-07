@@ -113,6 +113,10 @@ bool DR4B::safe() {
 * Secondary control set, no control loop
 */
 void DR4B::backup() {
+  if(joystickGetDigital(1, 7, JOY_RIGHT)) {
+    safety = false;
+    desiredLift = 0;
+  }
   if(joystickGetDigital(1,6, JOY_UP)){
     setAll(80);
   } else if (joystickGetDigital(1,6,JOY_DOWN)){
@@ -149,6 +153,7 @@ int DR4B::eStop() {
 */
 void DR4B::iterateCtl() {
   if(joystickGetDigital(1, 7, JOY_LEFT)) safety = true;
+
   int currentLiftL = getHeight('l') - startLiftL;                                         //Get lift heights in zeroed potetiometer values
   int currentLiftR = getHeight('r') - startLiftR;
   if(joystickGetDigital(1,6, JOY_UP)){                                                    //Take input as close to fixed sample rate
@@ -161,11 +166,20 @@ void DR4B::iterateCtl() {
       prevTime = millis();
       desiredLift-=14;                                                                    //Decrease desired position when given corresponding input
     }
-  } else if(joystickGetDigital(1,8, JOY_UP) || joystickGetDigital(1,8, JOY_LEFT) ||       //Set desired position to preset height of cone loader
-  joystickGetDigital(1,8, JOY_RIGHT) || joystickGetDigital(1, 8, JOY_DOWN) ){
+  } else if(joystickGetDigital(1,8, JOY_UP)){
     if(millis() - prevTime >= 10) {
       prevTime = millis();
       desiredLift = LOADER_PRESET;
+    }
+  } else if(joystickGetDigital(1, 8, JOY_DOWN)) {
+    if((millis() - prevTime) >= 10) {
+      prevTime = millis();
+      desiredLift-=5;                                                                    //Decrease desired position when given corresponding input
+    }
+  } else if(joystickGetDigital(1,8, JOY_RIGHT)){
+    if(millis() - prevTime >= 10) {
+      prevTime = millis();
+      desiredLift = STATIONARY_PRESET;
     }
   }
   if(desiredLift > DR4B_MAX) desiredLift = DR4B_MAX;                                      //Bounds check, do not try to force lift past physical limit
