@@ -29,14 +29,10 @@ class Drive : Subsystem{
       const static float tK; //Turn constant
 
       //drive ports
-      int _fr1;
-      int _br1;
-      int _fl1;
-      int _bl1;
-      int _fr2;
-      int _br2;
-      int _fl2;
-      int _bl2;
+      int _fr;
+      int _br;
+      int _fl;
+      int _bl;
 
       //sensors
       int er1;

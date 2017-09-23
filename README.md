@@ -14,7 +14,7 @@
   - contains references to subsytem instances initalized in init.cpp
 
 **Heads (.h) + Source (.cpp)**
-  - *DR4B.h + DR4B.cpp*
+    - *DR4B.h + DR4B.cpp*
     - Contains lift subsystem child
     - Controls lift motors through P(ID) loop for auto and driver control
   - *Drive.h + Drive.cpp*

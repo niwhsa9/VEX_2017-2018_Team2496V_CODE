@@ -2,29 +2,35 @@
 #include "ports.h"
 #include "robot.h"
 bool isSubInit = false;
-MogoLift* mogolift;
+DR4B* lift;
 Drive* drive;
+Claw* claw;
 int prevButtonEvent = millis();
 char page = 0;
 char numPages = 5;
 
 void subsystemInit() {
-  
+  /* LIFT INITALIZATION */
+  int liftMotors[10] = {M_LIFT_TR, M_LIFT_BR, M_LIFT_TL, M_LIFT_BL};
+  int liftRev[10] = {-1, -1, 1, 1};
 
-  int driveMotors[10] = {M_DRIVE_FR1, M_DRIVE_BR1, M_DRIVE_FL1, M_DRIVE_BL1, M_DRIVE_FR2, M_DRIVE_BR2, M_DRIVE_FL2, M_DRIVE_BL2};
-  int driveRev[10] = {-1, -1, 1, 1, 1, 1, -1, -1};
+  //while(1) printf("%d", liftRev[2]);
+  int liftSensors[10] = {A_LIFT_POT_L, A_LIFT_POT_R};
+  lift = new DR4B("", liftMotors, liftRev, 4, liftSensors, 0);
+  lift->init();
+
+  int driveMotors[10] = {M_DRIVE_FR, M_DRIVE_BR, M_DRIVE_FL, M_DRIVE_BL};
+  int driveRev[10] = {-1, -1, 1, 1};
   int driveSensors[10] = {D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, A_DRIVE_GYRO};
-  drive = new Drive("", driveMotors, driveRev, 8, driveSensors, 1); //4 ports, 6 motors
+  drive = new Drive("", driveMotors, driveRev, 4, driveSensors, 1); //4 ports, 6 motors
   drive->init();
 
-  int mogoMotors[10] = {M_MOGO_L, M_MOGO_R};
-  int mogoRev[10] = {1, -1};
-  int mogoSensors[10];
-  mogolift = new MogoLift("", mogoMotors, mogoRev, 2, mogoSensors, 2); //4 ports, 6 motors
-  mogolift->init();
-
-
-  
+  int clawMotors[] = {M_CLAW};
+  int clawRev[] = {1};
+  int clawSensors[] = {I2C_CLAW_ENC};
+  claw = new Claw("", clawMotors, clawRev, 1, clawSensors, 2);
+  claw->init();
+  isSubInit = true;
 }
 
 

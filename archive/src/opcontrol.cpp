@@ -15,12 +15,19 @@ void operatorControl() {
 	while (1) {
 		curTime = millis();
 
-		mogolift->iterateCtl();
+		if(lift->safe()) {  		//Lift P(I)D control if potentiometers are plugged in
+			lift->iterateCtl();
+      //printf("left: %d right %d,\n", lift->getHeight('l'), lift->getHeight('r'));
+		} else { 							//Direct control otherwise
+			lift->backup();
+        printf("left: %d right %d,\n", lift->getHeight('l'), lift->getHeight('r'));
+		}
 		drive->iterateCtl(); //Direct control
+		claw->iterateCtl(); //Direct control
 
 		if(curTime - prevTime >= 10000) {
 			char line1[16];
-    		char line2[16];
+    	char line2[16];
 			sprintf(line1, "< Battery >");
 			sprintf(line2, "%fV", (float)powerLevelMain()/1000);
 			lcdSetText(uart2, 1, line1);

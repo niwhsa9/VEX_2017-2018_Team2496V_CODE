@@ -13,14 +13,10 @@ int num, int sensors[10], char id=255):
 * ALWAYS EXPLICITLY call this after initalization.
 */
 void Drive::init() {
-  _fr1 = 0;
-  _br1 = 1;
-  _fl1 = 2;
-  _bl1 = 3;
-  _fr2 = 4;
-  _br2 = 5;
-  _fl2 = 6;
-  _bl2 = 7;
+  _fr = 0;
+  _br = 1;
+  _fl = 2;
+  _bl = 3;
 
   el1 = 0;
   el2 = 1;
@@ -82,10 +78,10 @@ void Drive::move(float distance, int speed, int direction) {
       if(abs(rSpeed) <= DRIVE_MIN_SPEED) rSpeed = DRIVE_MIN_SPEED * direction;
 
       //Set motors accordingly
-      setMotor(_bl1, (int)lSpeed);
-      setMotor(_bl1, (int)rSpeed);
-      setMotor(_fr1, (int)rSpeed);
-      setMotor(_fl1, (int)lSpeed);
+      setMotor(_bl, (int)lSpeed);
+      setMotor(_br, (int)rSpeed);
+      setMotor(_fr, (int)rSpeed);
+      setMotor(_fl, (int)lSpeed);
       delay(10);
   }
   setAll(0); //Disable motors
@@ -144,10 +140,10 @@ void Drive::move(float distance, int speed, int direction, unsigned int max_time
       if(abs(rSpeed) <= DRIVE_MIN_SPEED) rSpeed = DRIVE_MIN_SPEED * direction;
 
       //Set motors accordingly
-      setMotor(_bl1, (int)lSpeed);
-      setMotor(_bl1, (int)rSpeed);
-      setMotor(_fr1, (int)rSpeed);
-      setMotor(_fl1, (int)lSpeed);
+      setMotor(_bl, (int)lSpeed);
+      setMotor(_br, (int)rSpeed);
+      setMotor(_fr, (int)rSpeed);
+      setMotor(_fl, (int)lSpeed);
       delay(10);
   }
   setAll(0); //Disable motors
@@ -177,10 +173,10 @@ void Drive::turn(float degrees, int speed, char direction) {
       if(abs(rSpeed) <= TURN_MIN_SPEED) rSpeed = TURN_MIN_SPEED * direction * -1;
 
       //Set motors accordingly
-      setMotor(_bl1, (int)lSpeed);
-      setMotor(_bl1, (int)rSpeed);
-      setMotor(_fr1, (int)rSpeed);
-      setMotor(_fl1, (int)lSpeed);
+      setMotor(_bl, (int)lSpeed);
+      setMotor(_br, (int)rSpeed);
+      setMotor(_fr, (int)rSpeed);
+      setMotor(_fl, (int)lSpeed);
       delay(10);
   }
   setAll(0);  //Disable motors
@@ -208,15 +204,8 @@ int Drive::eStop() {
 * Main control loop with user input
 */
 void Drive::iterateCtl() {
-  setMotor(_bl1, joystickGetAnalog(1, 3));
-  setMotor(_bl2, joystickGetAnalog(1, 3));
-
-  setMotor(_br1, joystickGetAnalog(1, 2));
-  setMotor(_br2, joystickGetAnalog(1, 2));
-
-  setMotor(_fr1, joystickGetAnalog(1, 2));
-  setMotor(_fr2, joystickGetAnalog(1, 2));
-
-  setMotor(_fl1, joystickGetAnalog(1, 3));
-  setMotor(_fl2, joystickGetAnalog(1, 3));
+  setMotor(_bl, joystickGetAnalog(1, 3));
+  setMotor(_br, joystickGetAnalog(1, 2));
+  setMotor(_fr, joystickGetAnalog(1, 2));
+  setMotor(_fl, joystickGetAnalog(1, 3));
 }

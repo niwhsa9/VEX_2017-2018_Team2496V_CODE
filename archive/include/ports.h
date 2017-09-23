@@ -16,19 +16,24 @@
 #define A_DRIVE_GYRO 1
 
 //motor (1-10)
+#define M_LIFT_TR 7
+#define M_LIFT_TL 4
+#define M_LIFT_BR 8
+#define M_LIFT_BL 3
+#define M_DRIVE_BL 2
+#define M_DRIVE_BR 9
+#define M_DRIVE_FL 1
+#define M_DRIVE_FR 10
+#define M_CLAW 6
 
-#define M_DRIVE_BL1 0
-#define M_DRIVE_BR1 1
-#define M_DRIVE_FL1 0
-#define M_DRIVE_FR1 3
-#define M_DRIVE_BL2 0
-#define M_DRIVE_BR2 2
-#define M_DRIVE_FL2 0
-#define M_DRIVE_FR2 4
-
-#define M_MOGO_L 8
-#define M_MOGO_R 9
-
+/* DR4B DEFINES */
+#define A_UNPLUG -1000
+#define LOADER_PRESET 418
+#define STATIONARY_PRESET 924
+#define DR4B_THRESHOLD 10
+#define DR4B_MAX 1395
+#define DR4B_START_L 1380 //1360
+#define DR4B_START_R 1460 //1400
 
 /* DRIVE DEFINES */
 #define DRIVE_TURN_THRESHOLD 2
