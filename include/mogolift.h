@@ -13,7 +13,7 @@ class MogoLift : Subsystem{
   		void iterateCtl();
   		int eStop();
       void init();
-    
+
 
     private:
 
