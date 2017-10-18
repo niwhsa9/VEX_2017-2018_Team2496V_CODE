@@ -9,22 +9,22 @@ char page = 0;
 char numPages = 5;
 
 void subsystemInit() {
-  
+
 
   int driveMotors[10] = {M_DRIVE_FR1, M_DRIVE_BR1, M_DRIVE_FL1, M_DRIVE_BL1, M_DRIVE_FR2, M_DRIVE_BR2, M_DRIVE_FL2, M_DRIVE_BL2};
-  int driveRev[10] = {-1, -1, 1, 1, 1, 1, -1, -1};
+  int driveRev[10] = {1, -1, 1, 1, -1, -1, -1, 1};
   int driveSensors[10] = {D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, A_DRIVE_GYRO};
   drive = new Drive("", driveMotors, driveRev, 8, driveSensors, 1); //4 ports, 6 motors
   drive->init();
 
   int mogoMotors[10] = {M_MOGO_L, M_MOGO_R};
   int mogoRev[10] = {1, -1};
-  int mogoSensors[10];
+  int mogoSensors[10] = {D_LEFT_LIMIT, D_RIGHT_LIMIT};
   mogolift = new MogoLift("", mogoMotors, mogoRev, 2, mogoSensors, 2); //4 ports, 6 motors
   mogolift->init();
 
 
-  
+
 }
 
 

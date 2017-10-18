@@ -12,6 +12,7 @@ class Drive : Subsystem{
       void move(float distance, int speed, int direction); //tranverse the z_axis fml
       void move(float distance, int speed, int direction, unsigned int max_time);
       void f_move(float distance, int speed, int direction);
+      void setDrive(int left, int right);
       //rename that sheet ^^^
   		void debug();
   		void iterateCtl();
@@ -27,6 +28,11 @@ class Drive : Subsystem{
 
       const static float zK; //Drive constant
       const static float tK; //Turn constant
+      const static float t2K;
+
+      const static float pK;  //F
+      const static float dK;  //U
+      const static float iK;  //K
 
       //drive ports
       int _fr1;

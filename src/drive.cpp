@@ -1,6 +1,7 @@
 #include "drive.h"
 const float Drive::zK= 0.00035f;
 const float Drive::tK = 0.98f; //1.0
+const float Drive::t2K = 2.5;
 
 Drive::Drive(const char *name, int motors[10], int revField[10],
 int num, int sensors[10], char id=255):
@@ -30,10 +31,25 @@ void Drive::init() {
 
   le = encoderInit(D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, false);
   re = encoderInit(D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, true); //CHANGE FROM HARDCODE
-  gyro = gyroInit(1, 0);
+  gyro = gyroInit(A_DRIVE_GYRO, 0);
 
   //zK = 0.2;
   //tK = 0.2;
+}
+
+void Drive::setDrive(int left, int right) {
+
+    setMotor(_bl1, left);
+    setMotor(_bl2, left);
+
+    setMotor(_br1, right);
+    setMotor(_br2, right);
+
+    setMotor(_fr1, right);
+    setMotor(_fr2, right);
+
+    setMotor(_fl1, left);
+    setMotor(_fl2, left);
 }
 
 /*
@@ -43,7 +59,7 @@ void Drive::init() {
 */
 void Drive::callibrateGyro() {
   gyroShutdown(gyro);
-  gyro = gyroInit(1, 0);
+  gyro = gyroInit(A_DRIVE_GYRO, 0);
 }
 
 /*
@@ -82,10 +98,7 @@ void Drive::move(float distance, int speed, int direction) {
       if(abs(rSpeed) <= DRIVE_MIN_SPEED) rSpeed = DRIVE_MIN_SPEED * direction;
 
       //Set motors accordingly
-      setMotor(_bl1, (int)lSpeed);
-      setMotor(_bl1, (int)rSpeed);
-      setMotor(_fr1, (int)rSpeed);
-      setMotor(_fl1, (int)lSpeed);
+      setDrive((int)lSpeed, (int) rSpeed);
       delay(10);
   }
   setAll(0); //Disable motors
@@ -144,10 +157,7 @@ void Drive::move(float distance, int speed, int direction, unsigned int max_time
       if(abs(rSpeed) <= DRIVE_MIN_SPEED) rSpeed = DRIVE_MIN_SPEED * direction;
 
       //Set motors accordingly
-      setMotor(_bl1, (int)lSpeed);
-      setMotor(_bl1, (int)rSpeed);
-      setMotor(_fr1, (int)rSpeed);
-      setMotor(_fl1, (int)lSpeed);
+      setDrive((int)lSpeed, (int) rSpeed);
       delay(10);
   }
   setAll(0); //Disable motors
@@ -158,29 +168,49 @@ void Drive::move(float distance, int speed, int direction, unsigned int max_time
 */
 void Drive::turn(float degrees, int speed, char direction) {
   //Reset gyro & initalize variables
+  bool flag = false;
+  long stime = millis();
   gyroReset(gyro);
   float lSpeed = 0;
   float rSpeed = 0;
   int integ_gyro = 0;
+  float min_speed = TURN_MIN_SPEED;
 
   //Check robot isn't at target within a threshold
-  while(abs(integ_gyro - degrees) > DRIVE_TURN_THRESHOLD) {
+  while(true) {
       //Grab integrated gyro value from PROS library
       integ_gyro = abs(gyroGet(gyro));
       //printf("gyro: %d", integ_gyro);
       //Speed is proportional to distance from target, so it stops without roll at the target
+    if(flag == false) {
       lSpeed = (degrees-integ_gyro) * tK * direction * (speed/127.0);
-      rSpeed = lSpeed * -1 * tK;
+      rSpeed = lSpeed * -1;
 
       //If speed falls below certain values, motors will stall without movement, stop this
-      if(abs(lSpeed) <=TURN_MIN_SPEED) lSpeed = TURN_MIN_SPEED * direction;
-      if(abs(rSpeed) <= TURN_MIN_SPEED) rSpeed = TURN_MIN_SPEED * direction * -1;
 
-      //Set motors accordingly
-      setMotor(_bl1, (int)lSpeed);
-      setMotor(_bl1, (int)rSpeed);
-      setMotor(_fr1, (int)rSpeed);
-      setMotor(_fl1, (int)lSpeed);
+      if(abs(lSpeed) <=TURN_MIN_SPEED) {
+        lSpeed = TURN_MIN_SPEED * (degrees-integ_gyro)/abs(degrees-integ_gyro) * direction;
+        rSpeed = lSpeed * -1;
+      }
+    } else {
+      min_speed -= 0.1;
+      if(min_speed < 0) min_speed = 0;
+      /*
+      lSpeed = (degrees-integ_gyro) * t2K * direction * (speed/127.0);
+      rSpeed = lSpeed * -1;
+      */
+      lSpeed = min_speed * (degrees-integ_gyro)/abs(degrees-integ_gyro) * direction;
+      rSpeed = lSpeed * -1;
+      printf("\ngyro: %d speed %d", integ_gyro, (int)min_speed);
+
+    }
+
+      setDrive((int)lSpeed, (int) rSpeed);
+
+      if(abs(integ_gyro - degrees) < DRIVE_TURN_THRESHOLD && flag == false) {
+         flag = true;
+      }
+
       delay(10);
   }
   setAll(0);  //Disable motors
@@ -193,6 +223,8 @@ void Drive::turn(float degrees, int speed, char direction) {
 void Drive::debug() {
   //printf("LEFT %d", );
   //printf("RIGHT %d", getHeight('r')-startLiftR);
+    printf("\nLEFT %d", encoderGet(le));
+      printf("\nRIGHT %d", encoderGet(re));
 }
 
 /*
@@ -204,19 +236,31 @@ int Drive::eStop() {
   return 0;
 }
 
+
+
 /*
 * Main control loop with user input
 */
 void Drive::iterateCtl() {
-  setMotor(_bl1, joystickGetAnalog(1, 3));
-  setMotor(_bl2, joystickGetAnalog(1, 3));
+  int js[2];
+  float speed[2];
+  js[0] = joystickGetAnalog(1,3); //l
+  js[1]  =  joystickGetAnalog(1, 2); //r
+  for(int i = 0; i < 2; i++) {
+	/*
+      if(js[i] > -75 && js[i] < 75)
+	 speed[i] = (0.3333) * js[i];
+      else if(js[i] >= 75) speed[i] = 1.96153 * (js[i]-75) + 25;
+      else speed[i] = 1.96153 * (js[i] + 75) - 25;*/
+      int dir = 1;
+      if(js[i] < 0) dir = -1;
+      speed[i] = (((float)js[i]/127) * ((float)js[i]/127)) * 127 * dir;
 
-  setMotor(_br1, joystickGetAnalog(1, 2));
-  setMotor(_br2, joystickGetAnalog(1, 2));
+  }
+  int left =(int) speed[0];
+  int right = (int) speed[1];
 
-  setMotor(_fr1, joystickGetAnalog(1, 2));
-  setMotor(_fr2, joystickGetAnalog(1, 2));
-
-  setMotor(_fl1, joystickGetAnalog(1, 3));
-  setMotor(_fl2, joystickGetAnalog(1, 3));
+//  printf("left %d", left);
+//  printf("right %d", right);
+setDrive(left, right);
 }

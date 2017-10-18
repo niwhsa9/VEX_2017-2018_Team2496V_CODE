@@ -13,10 +13,10 @@ int num, int sensors[10], char id=255):
 * ALWAYS EXPLICITLY call this after initalization.
 */
 void Drive::init() {
-  _fr = 0;
-  _br = 1;
-  _fl = 2;
-  _bl = 3;
+  _fr1 = 0;
+  _br1 = 1;
+  _fl1 = 2;
+  _bl1 = 3;
 
   el1 = 0;
   el2 = 1;
@@ -26,7 +26,7 @@ void Drive::init() {
 
   le = encoderInit(D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, false);
   re = encoderInit(D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, true); //CHANGE FROM HARDCODE
-  gyro = gyroInit(1, 0);
+  gyro = gyroInit(A_DRIVE_GYRO, 0);
 
   //zK = 0.2;
   //tK = 0.2;
@@ -39,7 +39,8 @@ void Drive::init() {
 */
 void Drive::callibrateGyro() {
   gyroShutdown(gyro);
-  gyro = gyroInit(1, 0);
+  gyro = gyroInit(A_DRIVE_GYRO, 0);
+
 }
 
 /*
@@ -187,7 +188,7 @@ void Drive::turn(float degrees, int speed, char direction) {
 * Debug
 */
 void Drive::debug() {
-  //printf("LEFT %d", );
+  printf("LEFT %d", encoderGet(le));
   //printf("RIGHT %d", getHeight('r')-startLiftR);
 }
 

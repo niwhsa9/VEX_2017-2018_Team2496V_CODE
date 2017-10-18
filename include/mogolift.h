@@ -13,6 +13,8 @@ class MogoLift : Subsystem{
   		void iterateCtl();
   		int eStop();
       void init();
+      void moveMax();
+      void moveMin();
 
 
     private:
@@ -20,6 +22,12 @@ class MogoLift : Subsystem{
       //drive ports
       int _lm;
       int _rm;
+
+      int _lstop;
+      int _rstop;
+
+      int _lpot;
+      int _rpot;
 
 
 };

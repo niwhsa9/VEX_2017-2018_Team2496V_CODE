@@ -10,6 +10,12 @@ int numAuto = 6;
 
 
   void autonomous() {
-      
+      //mogolift->moveMin();
+      //delay(1000);
+      //mogolift->moveMax();
+      //delay(5000);
+      drive->turn(90, 127, 1);
+      //drive->move(36, 127, 1);
+
 
   }
