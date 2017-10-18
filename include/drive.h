@@ -34,6 +34,8 @@ class Drive : Subsystem{
       const static float dK;  //U
       const static float iK;  //K
 
+      const static int integ_limit;
+
       //drive ports
       int _fr1;
       int _br1;

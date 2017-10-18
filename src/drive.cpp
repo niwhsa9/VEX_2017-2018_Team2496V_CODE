@@ -3,6 +3,11 @@ const float Drive::zK= 0.00035f;
 const float Drive::tK = 0.98f; //1.0
 const float Drive::t2K = 2.5;
 
+const float Drive::pK = 2.4f;
+const float Drive::iK = 0.02f; //maker higher?
+const float Drive::dK = 0.2f;
+const int Drive::integ_limit = 50;
+
 Drive::Drive(const char *name, int motors[10], int revField[10],
 int num, int sensors[10], char id=255):
   Subsystem(name, motors, revField, num, _sensors, id)
@@ -167,50 +172,43 @@ void Drive::move(float distance, int speed, int direction, unsigned int max_time
 * Turn robot specified angle in degrees. Direction is 1 for positive, -1 for negative
 */
 void Drive::turn(float degrees, int speed, char direction) {
-  //Reset gyro & initalize variables
   bool flag = false;
   long stime = millis();
+  int ltime = 0;
   gyroReset(gyro);
   float lSpeed = 0;
   float rSpeed = 0;
+  int cur_gyro = 0;
   int integ_gyro = 0;
-  float min_speed = TURN_MIN_SPEED;
-
+  int integ_count = 0;
+  int error = 0;
+  int prevError = 0;
   //Check robot isn't at target within a threshold
   while(true) {
       //Grab integrated gyro value from PROS library
-      integ_gyro = abs(gyroGet(gyro));
-      //printf("gyro: %d", integ_gyro);
-      //Speed is proportional to distance from target, so it stops without roll at the target
-    if(flag == false) {
-      lSpeed = (degrees-integ_gyro) * tK * direction * (speed/127.0);
+      cur_gyro = abs(gyroGet(gyro));
+      error = degrees - cur_gyro;
+      integ_gyro+= error;
+      integ_count++;
+
+      lSpeed = ((error * pK) + ((error-prevError) * dK) + (integ_gyro * iK)) * (float)speed/127.0;
       rSpeed = lSpeed * -1;
 
-      //If speed falls below certain values, motors will stall without movement, stop this
-
-      if(abs(lSpeed) <=TURN_MIN_SPEED) {
-        lSpeed = TURN_MIN_SPEED * (degrees-integ_gyro)/abs(degrees-integ_gyro) * direction;
-        rSpeed = lSpeed * -1;
-      }
-    } else {
-      min_speed -= 0.1;
-      if(min_speed < 0) min_speed = 0;
-      /*
-      lSpeed = (degrees-integ_gyro) * t2K * direction * (speed/127.0);
-      rSpeed = lSpeed * -1;
-      */
-      lSpeed = min_speed * (degrees-integ_gyro)/abs(degrees-integ_gyro) * direction;
-      rSpeed = lSpeed * -1;
-      printf("\ngyro: %d speed %d", integ_gyro, (int)min_speed);
-
-    }
-
+      //printf("\ngyro: %d l speed %d", integ_gyro, lSpeed);
       setDrive((int)lSpeed, (int) rSpeed);
+      prevError = error;
 
+      if(integ_count >= 300) integ_gyro = 0;
+
+      //undef
       if(abs(integ_gyro - degrees) < DRIVE_TURN_THRESHOLD && flag == false) {
          flag = true;
+         ltime = millis();
+      } else if(abs(integ_gyro - degrees) < DRIVE_TURN_THRESHOLD && flag == true) {
+          if(millis()-ltime >= 420) break;
+          else flag = false;
       }
-
+      if(millis()-stime >= 2500) break;
       delay(10);
   }
   setAll(0);  //Disable motors
