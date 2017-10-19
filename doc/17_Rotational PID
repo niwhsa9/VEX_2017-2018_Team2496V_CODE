@@ -1,0 +1,13 @@
+With our new 8 motor drive train, it became immediately obvious that our old proportional + min speed system for gyro based turns 
+(shown on section ) is no longer effective. We will use a full PID control loop to accomplish these turns. The code for this loop
+is shown and commented below:
+
+There are four primary factors that we need to adjust. 
+  1. Proportional Constant kP
+  2. Integral Constant kI
+  3. Derrivative Constant kD
+  4. Max integral range max_integ 
+ 
+ The process of adjusting these constants is documented below:
+ 
+ 10/18
