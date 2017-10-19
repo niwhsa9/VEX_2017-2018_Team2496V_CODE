@@ -8,6 +8,12 @@ There are four primary factors that we need to adjust.
   3. Derrivative Constant kD
   4. Max integral range max_integ 
  
- The process of adjusting these constants is documented below:
+ The process of adjusting these constants was far too long (having gone through HUNDREDS of iterations) too completely recall for 
+ documentation. However, the relevant proccess and our strategy for constant tuning is explained below. 
  
  10/18
+
+//used 45, 90, 180
+//tested on multiple battries
+//all 4 effect each other
+//integral totally different based on the max range because 
