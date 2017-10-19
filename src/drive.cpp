@@ -35,7 +35,8 @@ void Drive::init() {
   gy = 4;
 
   le = encoderInit(D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, false);
-  re = encoderInit(D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, true); //CHANGE FROM HARDCODE
+  re = encoderInit(1, 2, true); //CHANGE FROM HARDCODE
+
   gyro = gyroInit(A_DRIVE_GYRO, 0);
 
   //zK = 0.2;
@@ -191,7 +192,7 @@ void Drive::turn(float degrees, int speed, char direction) {
       integ_gyro+= error;
       integ_count++;
 
-      lSpeed = ((error * pK) + ((error-prevError) * dK) + (integ_gyro * iK)) * (float)speed/127.0;
+      lSpeed = ((error * pK) + ((error-prevError) * dK) + (integ_gyro * iK)) * ((float)speed/127.0);
       rSpeed = lSpeed * -1;
 
       //printf("\ngyro: %d l speed %d", integ_gyro, lSpeed);
@@ -222,7 +223,7 @@ void Drive::debug() {
   //printf("LEFT %d", );
   //printf("RIGHT %d", getHeight('r')-startLiftR);
     printf("\nLEFT %d", encoderGet(le));
-      printf("\nRIGHT %d", encoderGet(re));
+    printf("\nRIGHT %d", encoderGet(re));
 }
 
 /*
