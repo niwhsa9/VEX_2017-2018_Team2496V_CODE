@@ -3,9 +3,9 @@ const float Drive::zK= 0.00035f;
 const float Drive::tK = 0.98f; //1.0
 const float Drive::t2K = 2.5;
 
-const float Drive::pK = 2.4f;
-const float Drive::iK = 0.02f; //maker higher?
-const float Drive::dK = 0.2f;
+const float Drive::pK = 1.7f; //1.5f
+const float Drive::iK = 0.02f; //0.04f
+const float Drive::dK = 21.0; //17.0
 const int Drive::integ_limit = 50;
 
 Drive::Drive(const char *name, int motors[10], int revField[10],
@@ -35,7 +35,7 @@ void Drive::init() {
   gy = 4;
 
   le = encoderInit(D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, false);
-  re = encoderInit(1, 2, true); //CHANGE FROM HARDCODE
+  re = encoderInit(D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, true); //CHANGE FROM HARDCODE
 
   gyro = gyroInit(A_DRIVE_GYRO, 0);
 
@@ -73,7 +73,7 @@ void Drive::callibrateGyro() {
 * encoder count (SLEW). Take input parameter of distance
 * in inches and speed
 */
-void Drive::move(float distance, int speed, int direction) {
+void Drive::move(float distance, int speed, int direction, int minspeed) {
   //Reset Encoders & initalize variables needed
   encoderReset(le);
   encoderReset(re);
@@ -100,8 +100,8 @@ void Drive::move(float distance, int speed, int direction) {
         rSpeed = speed * direction;
       }
       //If speed falls below certain values, motors will stall without movement, stop this
-      if(abs(lSpeed) <= DRIVE_MIN_SPEED) lSpeed = DRIVE_MIN_SPEED * direction;
-      if(abs(rSpeed) <= DRIVE_MIN_SPEED) rSpeed = DRIVE_MIN_SPEED * direction;
+      if(abs(lSpeed) <= minspeed) lSpeed = minspeed * direction;
+      if(abs(rSpeed) <= minspeed) rSpeed = minspeed * direction;
 
       //Set motors accordingly
       setDrive((int)lSpeed, (int) rSpeed);
@@ -195,11 +195,11 @@ void Drive::turn(float degrees, int speed, char direction) {
       lSpeed = ((error * pK) + ((error-prevError) * dK) + (integ_gyro * iK)) * ((float)speed/127.0);
       rSpeed = lSpeed * -1;
 
-      //printf("\ngyro: %d l speed %d", integ_gyro, lSpeed);
+      printf("\ngyro: %d speed %f", cur_gyro, lSpeed);
       setDrive((int)lSpeed, (int) rSpeed);
       prevError = error;
 
-      if(integ_count >= 300) integ_gyro = 0;
+      if(integ_count >= integ_limit) integ_gyro = 0;
 
       //undef
       if(abs(integ_gyro - degrees) < DRIVE_TURN_THRESHOLD && flag == false) {

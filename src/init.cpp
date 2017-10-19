@@ -23,6 +23,7 @@ void subsystemInit() {
   mogolift = new MogoLift("", mogoMotors, mogoRev, 2, mogoSensors, 2); //4 ports, 6 motors
   mogolift->init();
 
+  isSubInit = true;
 
 
 }

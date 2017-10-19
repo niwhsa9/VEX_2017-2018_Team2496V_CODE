@@ -6,12 +6,14 @@ int prevTime = 0;
 int curTime = 0;
 //extern "C" { //Make compatible with C
 void operatorControl() {
+
+
   lcdSetBacklight(uart2, false);
 
 	if(isSubInit!=true) { //Ensure subsystems were created
 		subsystemInit();
 	}
-	/* MAIN CONTROL LOOP */
+
 	while (1) {
 		curTime = millis();
 
@@ -19,7 +21,7 @@ void operatorControl() {
 		drive->iterateCtl(); //Direct control
 
     //mogolift->debug();
-    drive->debug();
+    //drive->debug();
 
     if(joystickGetDigital(1, 8, JOY_UP)) autonomous();
 
