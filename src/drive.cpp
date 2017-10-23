@@ -3,10 +3,21 @@ const float Drive::zK= 0.00035f;
 const float Drive::tK = 0.98f; //1.0
 const float Drive::t2K = 2.5;
 
-const float Drive::pK = 1.7f; //1.5f
-const float Drive::iK = 0.02f; //0.04f
-const float Drive::dK = 21.0; //17.0
-const int Drive::integ_limit = 50;
+/* BEST SETTINGS SO FAR
+P   3.0    =     =     =      =       =       5.0f
+I   0.13   =     =     0.18   0.22    0.23    0.20f
+D   0.0    =     =     5.0    8.0     8.2     18.5f
+IL  20     25    =     20     =       =       =
+N:  50     =    70     =      =       =       =
+
+*/
+
+
+
+const float Drive::pK = 5.0f; //3.0f
+const float Drive::iK = 0.20f; //0.07f
+const float Drive::dK = 18.5; //0.0
+const int Drive::integ_limit = 20;
 
 Drive::Drive(const char *name, int motors[10], int revField[10],
 int num, int sensors[10], char id=255):
@@ -73,8 +84,9 @@ void Drive::callibrateGyro() {
 * encoder count (SLEW). Take input parameter of distance
 * in inches and speed
 */
-void Drive::move(float distance, int speed, int direction, int minspeed) {
+void Drive::move(float distance, int speed, int direction, int minspeed,unsigned int max_time) {
   //Reset Encoders & initalize variables needed
+  int start_time = millis();
   encoderReset(le);
   encoderReset(re);
   int v_le = 0;
@@ -86,7 +98,7 @@ void Drive::move(float distance, int speed, int direction, int minspeed) {
                                           //360 ticks per revolution * revolutions needed = ticks
 
   //Check that robot isn't at the target within a threshold
-  while(abs(ticks-v_le) >= DRIVE_MOVE_THRESHOLD && abs(ticks-v_re) >= DRIVE_MOVE_THRESHOLD) {
+  while((abs(ticks-v_le) >= DRIVE_MOVE_THRESHOLD && abs(ticks-v_re) >= DRIVE_MOVE_THRESHOLD)) {
       //Update current encoder values
       v_le = abs(encoderGet(le));
       v_re = abs(encoderGet(re));
@@ -199,17 +211,20 @@ void Drive::turn(float degrees, int speed, char direction) {
       setDrive((int)lSpeed, (int) rSpeed);
       prevError = error;
 
-      if(integ_count >= integ_limit) integ_gyro = 0;
+      if(integ_count >= integ_limit) {
+        integ_gyro = 0;
+        integ_count = 0;
+      }
 
       //undef
       if(abs(integ_gyro - degrees) < DRIVE_TURN_THRESHOLD && flag == false) {
          flag = true;
          ltime = millis();
       } else if(abs(integ_gyro - degrees) < DRIVE_TURN_THRESHOLD && flag == true) {
-          if(millis()-ltime >= 420) break;
+          if(millis()-ltime >= 3020) break;
           else flag = false;
       }
-      if(millis()-stime >= 2500) break;
+      if(millis()-stime >= 5000) break;
       delay(10);
   }
   setAll(0);  //Disable motors

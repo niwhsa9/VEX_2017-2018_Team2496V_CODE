@@ -14,7 +14,10 @@ int numAuto = 6;
       //delay(1000);
       //mogolift->moveMax();
       //delay(5000);
-      drive->turn(90, 50, 1);
+      //drive->turn(45, 70, 1);
+      mogolift->moveMin();
+      drive->move(72, 127, 1, DRIVE_MIN_SPEED);
+      mogolift->moveMax();
       //drive->move(12, 127, 1, DRIVE_MIN_SPEED);
 
 

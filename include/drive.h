@@ -9,7 +9,7 @@ class Drive : Subsystem{
       Drive(const char *name, int motors[10], int revField[10],
   		int num, int sensors[10], char id);
 
-      void move(float distance, int speed, int direction, int minspeed); //tranverse the z_axis fml
+      void move(float distance, int speed, int direction, int minspeed, unsigned int max_time); //tranverse the z_axis fml
       void move(float distance, int speed, int direction, unsigned int max_time);
       void f_move(float distance, int speed, int direction);
       void setDrive(int left, int right);
