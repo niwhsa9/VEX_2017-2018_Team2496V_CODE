@@ -15,20 +15,31 @@ int numAuto = 6;
       //mogolift->moveMax();
       //delay(5000);
       //drive->turn(45, 70, 1);
+      int dir = 1;
+      gyroReset(drive->gyro);
       mogolift->moveMin();
-      drive->move(45, 127, 1, DRIVE_MIN_SPEED, 2000); //65
+      drive->move(53, 127, 1, DRIVE_MIN_SPEED, 2000); //65
       mogolift->moveMax();
-      drive->move(34, 127, -1, DRIVE_MIN_SPEED+7, 2000);
-      drive->turn(135, 60, -1);
+      drive->move(24, 127, -1, DRIVE_MIN_SPEED+7, 2000);
+      delay(500);
+      drive->turn(90, 70, -1);
+      drive->move(6, 50, -1, 50, 1000);
+      drive->move(2, 50, 1, DRIVE_MIN_SPEED, 2000);
+      //drive->move(5, 127, -1, DRIVE_MIN_SPEED+7, 2000);
+
+      drive->turn(90, 60, -1);
       //drive->move(6, 127, 1, DRIVE_MIN_SPEED + 7, 1000);
       //drive->turn(45, 70, 1);
-      drive->move(10, 127, 1, DRIVE_MIN_SPEED + 7, 1000);
+      drive->move(3, 127, 1, DRIVE_MIN_SPEED, 1000);
+      drive->turn(45, 70, 1); //90
+      drive->move(8, 50, 1, DRIVE_MIN_SPEED, 2000);
       drive->turn(90, 70, -1);
+
       drive->move(25, 127, 1, 127, 1000);
-      drive->move(12, 127, -1, 127, 500);
+      drive->move(10, 127, -1, 127, 500);
       //out of 20
 
-      drive->move(12, 30, 1, 20, 500);
+      drive->move(15, 30, 1, 20, 500);
 
       drive->move(6, 70, -1, 20, 500);
       drive->turn(90, 70, 1);
