@@ -32,8 +32,8 @@
 #define M_DRIVE_FL2 6
 #define M_DRIVE_FR2 4
 
-#define M_MOGO_L 8
-#define M_MOGO_R 9
+#define M_MOGO_L 9
+#define M_MOGO_R 8
 
 
 /* DRIVE DEFINES */

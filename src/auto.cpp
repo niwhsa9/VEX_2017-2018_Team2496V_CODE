@@ -16,8 +16,25 @@ int numAuto = 6;
       //delay(5000);
       //drive->turn(45, 70, 1);
       mogolift->moveMin();
-      drive->move(72, 127, 1, DRIVE_MIN_SPEED);
+      drive->move(65, 127, 1, DRIVE_MIN_SPEED, 2000);
       mogolift->moveMax();
+      drive->move(37, 127, -1, DRIVE_MIN_SPEED+7, 2000);
+      drive->turn(180, 70, -1);
+      //drive->move(6, 127, 1, DRIVE_MIN_SPEED + 7, 1000);
+      drive->turn(45, 70, 1);
+      drive->move(9, 127, 1, DRIVE_MIN_SPEED + 7, 1000);
+      drive->turn(90, 70, -1);
+      drive->move(25, 127, 1, 127, 1000);
+      drive->move(12, 127, -1, 127, 500);
+      drive->move(12, 30, 1, 30, 500);
+
+      drive->move(8, 70, -1, DRIVE_MIN_SPEED, 500);
+      drive->turn(90, 70, -1);
+      drive->move(6, 70, -1, DRIVE_MIN_SPEED, 500);
+      drive->turn(90, 70, -1);
+      mogolift->moveMin
+
+      //drive->move(35, 127, 1, 127, 2000);
       //drive->move(12, 127, 1, DRIVE_MIN_SPEED);
 
 

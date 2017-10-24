@@ -98,7 +98,7 @@ void Drive::move(float distance, int speed, int direction, int minspeed,unsigned
                                           //360 ticks per revolution * revolutions needed = ticks
 
   //Check that robot isn't at the target within a threshold
-  while((abs(ticks-v_le) >= DRIVE_MOVE_THRESHOLD && abs(ticks-v_re) >= DRIVE_MOVE_THRESHOLD)) {
+  while((abs(ticks-v_le) >= DRIVE_MOVE_THRESHOLD && abs(ticks-v_re) >= DRIVE_MOVE_THRESHOLD) && (millis() - start_time) < max_time) {
       //Update current encoder values
       v_le = abs(encoderGet(le));
       v_re = abs(encoderGet(re));
@@ -204,7 +204,7 @@ void Drive::turn(float degrees, int speed, char direction) {
       integ_gyro+= error;
       integ_count++;
 
-      lSpeed = ((error * pK) + ((error-prevError) * dK) + (integ_gyro * iK)) * ((float)speed/127.0);
+      lSpeed = ((error * pK) + ((error-prevError) * dK) + (integ_gyro * iK)) * ((float)speed/127.0) * direction;
       rSpeed = lSpeed * -1;
 
       printf("\ngyro: %d speed %f", cur_gyro, lSpeed);
@@ -221,10 +221,10 @@ void Drive::turn(float degrees, int speed, char direction) {
          flag = true;
          ltime = millis();
       } else if(abs(integ_gyro - degrees) < DRIVE_TURN_THRESHOLD && flag == true) {
-          if(millis()-ltime >= 3020) break;
+          if(millis()-ltime >= 1020) break; //3020 plz
           else flag = false;
       }
-      if(millis()-stime >= 5000) break;
+      if(millis()-stime >= 4000) break;
       delay(10);
   }
   setAll(0);  //Disable motors
