@@ -19,10 +19,10 @@ int numAuto = 6;
       drive->move(45, 127, 1, DRIVE_MIN_SPEED, 2000); //65
       mogolift->moveMax();
       drive->move(34, 127, -1, DRIVE_MIN_SPEED+7, 2000);
-      drive->turn(180, 70, -1);
+      drive->turn(135, 60, -1);
       //drive->move(6, 127, 1, DRIVE_MIN_SPEED + 7, 1000);
-      drive->turn(45, 70, 1);
-      drive->move(6, 127, 1, DRIVE_MIN_SPEED + 7, 1000);
+      //drive->turn(45, 70, 1);
+      drive->move(10, 127, 1, DRIVE_MIN_SPEED + 7, 1000);
       drive->turn(90, 70, -1);
       drive->move(25, 127, 1, 127, 1000);
       drive->move(12, 127, -1, 127, 500);
