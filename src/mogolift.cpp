@@ -51,9 +51,11 @@ int MogoLift::eStop() {
 }
 
 void MogoLift::moveMax() {
+  /*
     setMotor(_rm, 100);
     delay(100);
-    setMotor(_lm,100);
+    setMotor(_lm,100); */
+    setAll(90);
 
     while(digitalRead(_lstop) == true && digitalRead(_rstop) == true) {
         if(digitalRead(_lstop)) {
