@@ -19,6 +19,10 @@ const float Drive::iK = 0.20f; //0.07f
 const float Drive::dK = 18.5; //0.0
 const int Drive::integ_limit = 20;
 
+const float Drive::dpK = 0.6f; //3.0f
+const float Drive::diK = 0.05f; //0.07f
+const float Drive::ddK = 5; //0.0
+
 Drive::Drive(const char *name, int motors[10], int revField[10],
 int num, int sensors[10], char id=255):
   Subsystem(name, motors, revField, num, _sensors, id)
@@ -84,6 +88,7 @@ void Drive::callibrateGyro() {
 * encoder count (SLEW). Take input parameter of distance
 * in inches and speed
 */
+
 void Drive::move(float distance, int speed, int direction, int minspeed,unsigned int max_time) {
   //Reset Encoders & initalize variables needed
   int start_time = millis();
@@ -122,63 +127,62 @@ void Drive::move(float distance, int speed, int direction, int minspeed,unsigned
   setAll(0); //Disable motors
   }
 
-void Drive::f_move(float distance, int speed, int direction) {
-  //Reset Encoders & initalize variables needed
-  encoderReset(le);
-  encoderReset(re);
-  int v_le = 0;
-  int v_re = 0;
-
-
-  float ticks = (distance/(4*PI)) *  360; //distance/circumfrence = revolutions needed
-                                          //360 ticks per revolution * revolutions needed = ticks
-  setAll(speed*direction);
-  while(abs(ticks-v_le) >= DRIVE_MOVE_THRESHOLD) {
-    v_le = abs(encoderGet(le));
-    v_re = abs(encoderGet(re));
-    continue;
-  }
-  setAll(-10 * direction);
-  delay(200);
-  setAll(0);
-}
 
 void Drive::move(float distance, int speed, int direction, unsigned int max_time) {
-  //Reset Encoders & initalize variables needed
-  encoderReset(le);
-  encoderReset(re);
-  int v_le = 0;
-  int v_re = 0;
-  float lSpeed = 0;
-  float rSpeed = 0;
-  unsigned int startTime = millis();
+    float ticks = (distance/(4*PI)) *  360;
+    encoderReset(le);
+    encoderReset(re);
+    int v_le = 0;
+    int v_re = 0;
 
-  float ticks = (distance/(4*PI)) *  360; //distance/circumfrence = revolutions needed
-                                          //360 ticks per revolution * revolutions needed = ticks
+    bool flag = false;
+    long stime = millis();
+    int ltime = 0;
+    float lSpeed = 0;
+    float rSpeed = 0;
 
-  //Check that robot isn't at the target within a threshold
-  while((abs(ticks-v_le) >= DRIVE_MOVE_THRESHOLD && abs(ticks-v_re) >= DRIVE_MOVE_THRESHOLD) &&  millis()-startTime < max_time) {
-      //Update current encoder values
-      v_le = abs(encoderGet(le));
-      v_re = abs(encoderGet(re));
-    //  printf("r: %f   d: %f", rSpeed, ticks);
-      //Speed is proportional to distance from target, so it stops without roll at the target
-      if(v_le >= ticks/3) { //REMOVE
-        lSpeed = (ticks-v_le) * speed * direction * zK;
-        rSpeed = (ticks-v_re) * speed * direction * zK;
-      } else {
-        lSpeed = speed * direction;
-        rSpeed = speed * direction;
-      }
-      //If speed falls below certain values, motors will stall without movement, stop this
-      if(abs(lSpeed) <= DRIVE_MIN_SPEED) lSpeed = DRIVE_MIN_SPEED * direction;
-      if(abs(rSpeed) <= DRIVE_MIN_SPEED) rSpeed = DRIVE_MIN_SPEED * direction;
+    int integ_vle = 0;
+    int integ_vre = 0;
 
-      //Set motors accordingly
-      setDrive((int)lSpeed, (int) rSpeed);
-      delay(10);
-  }
-  setAll(0); //Disable motors
+    int integ_count = 0;
+
+    int lerror = 0;
+    int rerror = 0;
+    int prevlError = 0;
+    int prevrError = 0;
+    //Check robot isn't at target within a threshold
+    while(true) {
+        //Grab integrated gyro value from PROS library
+        v_le = abs(encoderGet(le));
+        v_re = abs(encoderGet(re));
+
+        lerror = ticks-v_le;
+        rerror = ticks-v_re;
+        integ_vle+= lerror;
+        integ_vre+= rerror;
+        integ_count++;
+
+        lSpeed = ((lerror * dpK) + ((lerror-prevlError) * ddK) + (integ_vle * diK)) * ((float)speed/127.0) * direction;
+        rSpeed = ((rerror * dpK) + ((rerror-prevrError) * ddK) + (integ_vre * diK)) * ((float)speed/127.0) * direction;
+
+      //  printf("\ntarget %f vle: %d speed %f rle %d speed %f", ticks, v_le, lSpeed, v_re, rSpeed);
+      printf("\ntarget: %f vle: %d speed: %f", ticks, v_le, lSpeed);
+        setDrive((int)lSpeed, (int) rSpeed);
+        prevlError = lerror;
+        prevrError = rerror;
+
+        if(integ_count >= integ_limit) {
+          integ_vle = 0;
+          integ_vre = 0;
+          integ_count = 0;
+        }
+
+
+        if(millis()-stime >= max_time) break;
+        delay(10);
+    }
+    setAll(0);  //Disable motors
+
 }
 
 /*
@@ -230,6 +234,8 @@ void Drive::turn(float degrees, int speed, char direction) {
   setAll(0);  //Disable motors
 
 }
+
+
 
 /*
 * Debug

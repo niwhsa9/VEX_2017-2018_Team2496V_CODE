@@ -10,13 +10,8 @@ int numAuto = 6;
 
 
   void autonomous() {
-      //mogolift->moveMin();
-      //delay(1000);
-      //mogolift->moveMax();
-      //delay(5000);
-      //drive->turn(45, 70, 1);
-      int dir = 1;
-      gyroReset(drive->gyro);
+  //  drive->move(24, 127, -1, 4000);
+    /*
       mogolift->moveMin();
       drive->move(53, 127, 1, DRIVE_MIN_SPEED, 2000); //65
       mogolift->moveMax();
@@ -45,17 +40,6 @@ int numAuto = 6;
       drive->turn(90, 70, 1);
       drive->move(50, 50, -1, 50, 2000);
 
-      /*
-      drive->turn(90, 70, -1);
-      drive->move(6, 70, -1, DRIVE_MIN_SPEED, 500);
-      drive->turn(90, 70, -1);
-      mogolift->moveMin();
-      drive->move(6, 70, 1, DRIVE_MIN_SPEED, 500);
-      mogolift->moveMax();
       */
-
-      //drive->move(35, 127, 1, 127, 2000);
-      //drive->move(12, 127, 1, DRIVE_MIN_SPEED);
-
 
   }
