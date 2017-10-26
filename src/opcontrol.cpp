@@ -21,7 +21,7 @@ void operatorControl() {
 		drive->iterateCtl(); //Direct control
 
     //mogolift->debug();
-    //drive->debug();
+    drive->debug();
 
     if(joystickGetDigital(1, 8, JOY_UP)) autonomous();
 

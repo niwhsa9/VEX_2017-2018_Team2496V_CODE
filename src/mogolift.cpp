@@ -51,12 +51,8 @@ int MogoLift::eStop() {
 }
 
 void MogoLift::moveMax() {
-  /*
-    setMotor(_rm, 100);
-    delay(100);
-    setMotor(_lm,100); */
     setAll(90);
-
+    /*
     while(digitalRead(_lstop) == true && digitalRead(_rstop) == true) {
         if(digitalRead(_lstop)) {
           //setMotor(_lm, 100);
@@ -66,11 +62,15 @@ void MogoLift::moveMax() {
           //setMotor(_rm, 100);
         } else setMotor(_rm, 0);
 
+    }*/
+    while(digitalRead(_lstop) == true) {
+      continue;
     }
+    setAll(0);
 
 }
 
-void MogoLift::moveMin() {
+void MogoLift::moveMin() {/*
   while(abs(analogRead(A_LIFT_POT_L) - LIFT_MIN_L) >= LIFT_TARGET_THRESHOLD && abs(analogRead(A_LIFT_POT_R) - LIFT_MIN_R) >= LIFT_TARGET_THRESHOLD) {
       if(abs(analogRead(A_LIFT_POT_L) - LIFT_MIN_L) >= LIFT_TARGET_THRESHOLD) {
         setMotor(_lm, -90);
@@ -80,7 +80,12 @@ void MogoLift::moveMin() {
         setMotor(_rm, -90);
       } else setMotor(_rm, 0);
 
+  }*/
+  setAll(-90);
+  while(abs(analogRead(A_LIFT_POT_L)- LIFT_MIN_L)  >= LIFT_TARGET_THRESHOLD) {
+    continue;
   }
+  setAll(0);
 
 }
 /*

@@ -16,6 +16,8 @@
 #define D_LEFT_LIMIT 5
 #define D_RIGHT_LIMIT 8
 
+#define C_LIMIT 9
+
 //analog sensors (1-10)
 #define A_LIFT_POT_R 2
 #define A_LIFT_POT_L 1
