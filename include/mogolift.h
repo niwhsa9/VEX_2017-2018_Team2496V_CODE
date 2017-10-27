@@ -15,6 +15,7 @@ class MogoLift : Subsystem{
       void init();
       void moveMax();
       void moveMin();
+      void setEm(int speed);
 
 
     private:

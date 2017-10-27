@@ -228,7 +228,7 @@ void Drive::turn(float degrees, int speed, char direction) {
           if(millis()-ltime >= 1020) break; //3020 plz
           else flag = false;
       }
-      if(millis()-stime >= 4000) break;
+      if(millis()-stime >= 1600) break;
       delay(10);
   }
   setAll(0);  //Disable motors

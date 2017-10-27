@@ -88,6 +88,8 @@ void MogoLift::moveMin() {/*
   setAll(0);
 
 }
+
+void MogoLift::setEm(int speed) { setAll(speed); }
 /*
 * Main control loop with user input
 */
