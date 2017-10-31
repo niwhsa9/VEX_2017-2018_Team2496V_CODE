@@ -23,7 +23,7 @@ void operatorControl() {
     //mogolift->debug();
     drive->debug();
 
-    if(joystickGetDigital(1, 8, JOY_UP)) autonomous();
+    //if(joystickGetDigital(1, 8, JOY_UP)) autonomous();
 
 		if(curTime - prevTime >= 10000) {
 			char line1[16];

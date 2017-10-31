@@ -4,9 +4,9 @@
 
 int autoMode = 1; //0
 const char *autoModeStr[] = {
-  "10 Mob G", "20 Mob G L", "20 Mob G R", "Avoid R", "Avoid L", "5 Mob G L"
+  "SKILLZ", "20 POINT R", "Alt", "20 POINT L"
 };
-int numAuto = 6;
+int numAuto = 4;
 
 
   void autonomous() {/*
@@ -15,7 +15,7 @@ int numAuto = 6;
         mogolift->moveMin();
       }*/
   //  drive->move(24, 127, -1, 4000);
-
+    if(autoMode == 0) {
       mogolift->moveMin();
       drive->move(40, 15, 1, 1500);
       mogolift->moveMax();
@@ -23,7 +23,7 @@ int numAuto = 6;
       drive->turn(90, 70, 1);
       drive->move(17, 40, 1, 1500);
       drive->turn(90, 70, 1);
-      drive->move(40, 127, 1, 127, 1500);
+      drive->move(40, 127, 1, 127, 1200);
       drive->move(15, 127, -1, 1500);
       drive->move(10, 10, 1, 1500);
       drive->move(10, 20, -1, 1500);
@@ -35,7 +35,7 @@ int numAuto = 6;
       delay(2000);
       drive->setDrive(0,0);
       mogolift->moveMin();
-      drive->move(8, 15, 1, 1500);
+      drive->move(8, 15, 1, 1100);
 
       //drive->turn(8, 70, 1);
       drive->move(40, 15, 1, 1500);
@@ -45,7 +45,7 @@ int numAuto = 6;
       drive->turn(90, 70, -1);
       drive->move(65, 38, 1, 23, 3000); //DIS ONE
       mogolift->moveMin();
-      mogolift->setEm(40);
+      mogolift->setEm(30);
     //  drive->move(20, 20, -1, 1000);
       drive->move(10, 20, -1, 3000);
       //put down mogo
@@ -70,4 +70,28 @@ int numAuto = 6;
       drive->move(17, 20, 1, 1500);
       drive->turn(90, 70, 1);
       drive->move(25, 127, 1, 127, 1500);
+    } else if(autoMode == 1) {
+      mogolift->moveMin();
+      drive->move(45, 127, 1, DRIVE_MIN_SPEED, 2000); //65
+      mogolift->moveMax();
+      drive->move(34, 127, -1, DRIVE_MIN_SPEED+7, 2000);
+      drive->turn(135, 60, -1);
+      drive->move(10, 127, 1, DRIVE_MIN_SPEED + 7, 1000);
+      drive->turn(90, 70, -1);
+      drive->move(25, 127, 1, 127, 1000);
+      drive->move(12, 127, -1, 127, 500);
+    } else if(autoMode ==2) {
+      drive->move(83, 127, 1, 4000);
+    } else if(autoMode == 3) {
+      mogolift->moveMin();
+      drive->move(45, 127, 1, DRIVE_MIN_SPEED, 2000); //65
+      mogolift->moveMax();
+      drive->move(34, 127, -1, DRIVE_MIN_SPEED+7, 2000);
+      drive->turn(135, 60, 1);
+      drive->move(10, 127, 1, DRIVE_MIN_SPEED + 7, 1000);
+      drive->turn(90, 70, 1);
+      drive->move(25, 127, 1, 127, 1000);
+      drive->move(12, 127, -1, 127, 500);
+
+    }
     }
