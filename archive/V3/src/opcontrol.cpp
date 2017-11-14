@@ -7,31 +7,23 @@ int curTime = 0;
 //extern "C" { //Make compatible with C
 void operatorControl() {
 
-  if(lftTsk != NULL)taskDelete(lftTsk);
+
   lcdSetBacklight(uart2, false);
 
 	if(isSubInit!=true) { //Ensure subsystems were created
 		subsystemInit();
 	}
-  gyroReset(drive->gyro);
+
 	while (1) {
 		curTime = millis();
 
-    if(lift->safe()) {  		//Lift P(I)D control if potentiometers are plugged in
-      lift->iterateCtl();
-      //printf("left: %d right %d,\n", lift->getHeight('l'), lift->getHeight('r'));
-    } else { 							//Direct control otherwise
-      lift->backup();
-        printf("left: %d right %d,\n", lift->getHeight('l'), lift->getHeight('r'));
-    }
-		claw->iterateCtl();
+		mogolift->iterateCtl();
 		drive->iterateCtl(); //Direct control
-    //lift->debug();
-    int vle = abs(encoderGet(drive->le));
-      int vre = abs(encoderGet(drive->re));
-  //  printf("\n%d --- %d", vle, vre);
 
-    if(joystickGetDigital(1, 8, JOY_UP)) autonomous();
+    //mogolift->debug();
+    drive->debug();
+
+    //if(joystickGetDigital(1, 8, JOY_UP)) autonomous();
 
 		if(curTime - prevTime >= 10000) {
 			char line1[16];

@@ -14,18 +14,18 @@ N:  50     =    70     =      =       =       =
 
 
 
-const float Drive::pK = 4.8f; //6.8f
-const float Drive::iK = 0.05f; //0.07f
-const float Drive::dK = 50.5; //0.0
+const float Drive::pK = 5.0f; //3.0f
+const float Drive::iK = 0.20f; //0.07f
+const float Drive::dK = 18.5; //0.0
 const int Drive::integ_limit = 20;
 
-const float Drive::dpK = 0.3f; //3.0f
+const float Drive::dpK = 0.6f; //3.0f
 const float Drive::diK = 0.05f; //0.07f
-const float Drive::ddK = 10; //0.0
+const float Drive::ddK = 5; //0.0
 
 Drive::Drive(const char *name, int motors[10], int revField[10],
 int num, int sensors[10], char id=255):
-  Subsystem(name, motors, revField, num, sensors, id)
+  Subsystem(name, motors, revField, num, _sensors, id)
   {};
 
 
@@ -38,7 +38,10 @@ void Drive::init() {
   _br1 = 1;
   _fl1 = 2;
   _bl1 = 3;
-
+  _fr2 = 4;
+  _br2 = 5;
+  _fl2 = 6;
+  _bl2 = 7;
 
   el1 = 0;
   el2 = 1;
@@ -58,13 +61,16 @@ void Drive::init() {
 void Drive::setDrive(int left, int right) {
 
     setMotor(_bl1, left);
+    setMotor(_bl2, left);
 
     setMotor(_br1, right);
+    setMotor(_br2, right);
 
     setMotor(_fr1, right);
+    setMotor(_fr2, right);
 
     setMotor(_fl1, left);
-
+    setMotor(_fl2, left);
 }
 
 /*
@@ -158,7 +164,7 @@ void Drive::move(float distance, int speed, int direction, unsigned int max_time
 
         lSpeed = ((lerror * dpK) + ((lerror-prevlError) * ddK) + (integ_vle * diK)) * ((float)speed/127.0) * direction;
         rSpeed = ((rerror * dpK) + ((rerror-prevrError) * ddK) + (integ_vre * diK)) * ((float)speed/127.0) * direction;
-        //rSpeed = lSpeed;
+
       //  printf("\ntarget %f vle: %d speed %f rle %d speed %f", ticks, v_le, lSpeed, v_re, rSpeed);
       printf("\ntarget: %f vle: %d speed: %f", ticks, v_le, lSpeed);
         setDrive((int)lSpeed, (int) rSpeed);
@@ -171,15 +177,6 @@ void Drive::move(float distance, int speed, int direction, unsigned int max_time
           integ_count = 0;
         }
 
-        if(abs(ticks-v_re) < DRIVE_MOVE_THRESHOLD && flag == false) {
-           flag = true;
-           ltime = millis();
-        } else if(abs(ticks-v_re)  < DRIVE_MOVE_THRESHOLD && flag == true) {
-            if(millis()-ltime >= 400) break; //3020 plz
-            //else flag = false;
-        } else if (flag == true && abs(ticks-v_re) > DRIVE_TURN_THRESHOLD) {
-            flag = false;
-        }
 
         if(millis()-stime >= max_time) break;
         delay(10);
@@ -228,12 +225,10 @@ void Drive::turn(float degrees, int speed, char direction) {
          flag = true;
          ltime = millis();
       } else if(abs(integ_gyro - degrees) < DRIVE_TURN_THRESHOLD && flag == true) {
-          if(millis()-ltime >= 300) break; //3020 plz
-          //else flag = false;
-      } else if (flag == true && abs(integ_gyro - degrees) > DRIVE_TURN_THRESHOLD) {
-          //flag = false;
+          if(millis()-ltime >= 1020) break; //3020 plz
+          else flag = false;
       }
-      if(millis()-stime >= 2000) break;
+      if(millis()-stime >= 1600) break;
       delay(10);
   }
   setAll(0);  //Disable motors
