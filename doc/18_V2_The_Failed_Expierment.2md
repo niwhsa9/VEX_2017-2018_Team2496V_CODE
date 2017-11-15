@@ -10,4 +10,5 @@ a programming aspect. The following are what we got out of it:
  -  Created a new drive/joystick function map, see section 16 
  -  Learned that using the fence as a reset point can be unreliable if the fence isn't fully tightened/secured. 
  
- Anyways, onwards and upwards. V3 is the big one ;). 
+ Anyways, onwards and upwards. V3 is the big one ;). PID is going to be a big deal because we have plans for stack height presets controlled 
+ by partner controll (shh don't tell anybody). 
