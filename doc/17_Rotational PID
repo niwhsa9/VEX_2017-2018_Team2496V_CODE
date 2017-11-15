@@ -1,6 +1,8 @@
 With our new 8 motor drive train, it became immediately obvious that our old proportional + min speed system for gyro based turns 
-(shown on section ) is no longer effective. We will use a full PID control loop to accomplish these turns. The code for this loop
-is shown and commented below:
+(shown on section ) is no longer effective. We will use a full PID control loop to accomplish these turns. This loop is a library
+function that should be used for ALL future robots without much modification. The only changes will be the four constants discussed later.
+
+The code for this loop is shown and commented below:
 
 There are four primary factors that we need to adjust. 
   1. Proportional Constant kP
@@ -17,3 +19,7 @@ There are four primary factors that we need to adjust.
 //tested on multiple battries
 //all 4 effect each other
 //integral totally different based on the max range because 
+
+
+We implemented the same system (practically identical code but different constants) for our linear movement to replace the old
+move() function. 
