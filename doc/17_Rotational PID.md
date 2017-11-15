@@ -1,11 +1,11 @@
-** Background ** 
+**Background** 
 
 With our new 8 motor drive train, it became immediately obvious that our old proportional + min speed system for gyro based turns 
 (shown on section ) is no longer effective. We will use a full PID control loop to accomplish these turns. This
 should make our turns more accurate and faster. This loop is a library function that should be used for ALL future robots without 
 much modification. 
 
-** A VERY Simple PID theory (in our words) **
+**A VERY Simple PID theory (in our words)**
 Please note: we are not graduate electrical engineers, so our knowledge of PID and control theory as a subject is extremely limited 
 and the concepts explained below are to the best of our understanding. They are simplified and in our words, but may not properly convey 
 the full scope of the subject. Most of us have not even taken Calculus yet and thus the math is explained in terms of engineering/real world application but much of the important theory is lost in this explanation. 
@@ -21,7 +21,7 @@ Proportional - This one is exactly what it sounds like. It produces an output va
 
 Integral - Integral in mathematics is simply explained as the area under a curve. For error, this means that integral is the sum of error over time (sumError += curError). This is useful encompasses a total behavior over time of the plant compared to immediate error like proportional. Integral can be used to filter out anomallies in data and also to provide the ability to overcome small error (by building up) that the proportional cannot handle. 
 
-Derivative - Derivative in mathematics is simply explained as the instantaenous rate of change. This can be obtained from subtracting  Derrivitive is very useful for preventing large build up and overshooting the target from the P and I components. Derravitive is able to monitor the change being applied and essentially predict the plant response in order to reduce the change so the plant does not over compensate. It is worth noting that instantaneous ROC in a microprocessor is limited by the speed that it can iterate the loop. 
+Derivative - Derivative in mathematics is simply explained as the instantaenous rate of change. This can be obtained from subtracting previous error from current error (curError - prevError). Derrivitive is very useful for preventing large build up and overshooting the target from the P and I components. Derravitive is able to monitor the change being applied and essentially predict the plant response in order to reduce the change so the plant does not over compensate. It is worth noting that instantaneous ROC in a microprocessor is limited by the speed that it can iterate the loop. 
 
 These three controllers compliment each other perfectly, making up for the weakpoints of one another. When combined correctly, the outcome is a very accurate control that gets even closer to desired values as time progresses. This is shown below. 
 
@@ -29,7 +29,7 @@ https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/PID_varyingP.jpg/320px
 
 It starts off very innacuratly as the P overshoots and the I and D do not have enough data to be relevant as the control is still starting. Howevr, the I quickly starts to dial it in and the D dampens the osccilations. 
 
-** PID in VEX ** 
+**PID in VEX** 
 We use a pid because turning (among other things) is a complex problem in VEX due to the the fact that resistance from the friction stalls motors at low speeds that a proportional alone would produce. 
 
 In our case, the following explain our application of PID:
@@ -46,20 +46,20 @@ There are four primary factors that we need to adjust.
   3. Derrivative Constant kD
   4. Max integral limit
   
-The goal is to accomplish as much as possible with P and then quickly finish off the turn with input from I and D. The max integral limit specifies how much integral data to store (
+The goal is to accomplish as much as possible with P and then quickly finish off the turn with input from I and D. The max integral limit specifies how much integral data to store as too much data may make the integral irrelevant due to the fact that turns are very short, and the initial part of the turn is very different behavior then the end part. 
  
 
-** Things to keep in mind ** 
+**Things to keep in mind** 
 - Because all four constants effect each other, they must be balanced accordingly and one change WILL effect others.
 - We were sure to test the PID on multiple battery levels and 45*, 90*, and 180* turns to ensure accuracy and repeatability
 in all situations. 
 - Control loop programming requires a programmer to be mindful of real world implications. The most obvious example
 is the motor speed bottom limits discussed in "PID in VEX"
 
-** Our Code **
+**Our Code**
 The code for this loop is shown and commented below:
 
-** Constant Selection and Adjusting ** 
+**Constant Selection and Adjusting** 
 
  The process of adjusting these constants was far too long (having gone through HUNDREDS of iterations) too completely recall exact
  values for documentation. However, the relevant proccess and our strategy for constant tuning is explained below. 
@@ -78,7 +78,7 @@ excellent.
 
 
 
-** Future Improvements **
+**Future Improvements**
 We implemented the same system for our linear movement (to replace move()) and we came to an important realization:
 
 The PID source code is practically identical for turning, driving, and lift height alike. The only changes will be the four constants 
@@ -89,6 +89,6 @@ feedback device (for scaling). Its primary function will receive the error (targ
 
 In addition, more accurate methods for numerical integration exist than the one we currently have limited by cortex sample rate. We will most likely attempt an implementation of trapezoid rule as an upgrade to the PID library. 
 
-Another cool feature to add to the Subsystem base class would be the ability to output data from the cortex to our development laptop using JINX (a PROS tool). This could let us take PID tests and graph the data in excel to show us how each term helped correct to the target and the overall actual position compared to the target. 
+Another cool feature to add to the Subsystem base class would be the ability to output data from the cortex to our development laptop using JINX (a PROS library/tool). This could let us take PID tests and graph the data in excel to show us how each term helped correct to the target and the overall actual position compared to the target. 
 
 Yikes that was a long log. Fingers are bleeding. Control theory is super cool black magic ;) 
