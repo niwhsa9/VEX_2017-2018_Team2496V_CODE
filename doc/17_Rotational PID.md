@@ -10,26 +10,43 @@ Please note: we are not graduate electrical engineers, so our knowledge of PID a
 and the concepts explained below are to the best of our understanding. They are simplified and in our words, but may not properly convey 
 the full scope of the subject. Most of us have not even taken Calculus yet and thus the math is explained in terms of engineering/real world application but much of the important theory is lost in this explanation. 
 
+PID, an acronym for Proportional, Integral, Derrative, is an important control loop that has many real world applications such as keeping airplanes straight, movements on robots, cruise control in cars, and temperature control in a 3d printer's bed. The purpose of a control loop is to obtain consistent and accurate output despite variables in enviornment such as voltage levels or obstructions such as friction. It combines the outpu tof three different controlers with an assigned importance on each (in the form of a constant) and produces a cumulative output. 
 
-PID, short for Proportional, Integral, Derrative is an important control loop that has many real world applications such as keeping airplanes level, movements on robots, cruise control in cars, and temperature control in a 3d printer's bed. The purpose of a control loop is to obtain consistent and accurate output despite variables in enviornment such as voltage levels or obstructions such as friction. It combines the output of three different controlers with an assigned importance on each (in the form of a constant) and produces a cumulative output. 
-
-
+The loop is run at high speed to control some sort of "plant", which is the is a process that takes input to produce some output based on the input. The plant is monitored by some sort of feedback device. The controller takes in an input of "error" on each iteration. This error is equal to the value of the feedback device subtracted from the desired value of the plant (desired - actual). Error is than used differently in each controller to produce output settings that will be summed then applied to the plant in effort to reduce error. Each controller also has an associated constant which changes its weight in the final output as well as help scale the output appropriately to actually apply input within the range of the plant's acceptable inputs. This is shown in the following diagram:
 
 https://oscarliang.com/ctt/uploads/2013/10/PID-three-algorithms.jpg
+
+Each controllers effects are explained below given the input of "error":
+Proportional - This one is exactly what it sounds like. It produces an output value proportional to the error. More error: applies more output. Less error: applies less output. This is the bulk of the controller and does 80% of the job. Proportional can get you close to the target, but close sometimes won't cut it. 
+
+Integral - Integral in mathematics is simply explained as the area under a curve. For error, this means that integral is the sum of error over time (sumError += curError). This is useful encompasses a total behavior over time of the plant compared to immediate error like proportional. Integral can be used to filter out anomallies in data and also to provide the ability to overcome small error (by building up) that the proportional cannot handle. 
+
+Derivative - Derivative in mathematics is simply explained as the instantaenous rate of change. This can be obtained from subtracting  Derrivitive is very useful for preventing large build up and overshooting the target from the P and I components. Derravitive is able to monitor the change being applied and essentially predict the plant response in order to reduce the change so the plant does not over compensate. It is worth noting that instantaneous ROC in a microprocessor is limited by the speed that it can iterate the loop. 
+
+These three controllers compliment each other perfectly, making up for the weakpoints of one another. When combined correctly, the outcome is a very accurate control that gets even closer to desired values as time progresses. This is shown below. 
+
 https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/PID_varyingP.jpg/320px-PID_varyingP.jpg
 
-//becomes more acurate with time 
-//many real world application (temperature control, robots, airplanes) 
-
+It starts off very innacuratly as the P overshoots and the I and D do not have enough data to be relevant as the control is still starting. Howevr, the I quickly starts to dial it in and the D dampens the osccilations. 
 
 ** PID in VEX ** 
+We use a pid because turning (among other things) is a complex problem in VEX due to the the fact that resistance from the friction stalls motors at low speeds that a proportional alone would produce. 
 
+In our case, the following explain our application of PID:
+The plant - is the robot's drivetrain that takes an input of speed and outputs robot movement 
+The feedback device - is the gyroscope IMU sensor to measure angle.
+The desired value - is the angle we want the robot to turn 
+The actual value - is the gyroscopes reading as an angle in degrees
+
+The constants must help scale so that outputs match motor speeds -127, 127 and also give appropriate emphasis on each componenet
 
 There are four primary factors that we need to adjust. 
   1. Proportional Constant kP
   2. Integral Constant kI
   3. Derrivative Constant kD
-  4. Max integral range max_integ 
+  4. Max integral limit
+  
+The goal is to accomplish as much as possible with P and then quickly finish off the turn with input from I and D. The max integral limit specifies how much integral data to store (
  
 
 ** Things to keep in mind ** 
@@ -42,7 +59,7 @@ is the motor speed bottom limits discussed in "PID in VEX"
 ** Our Code **
 The code for this loop is shown and commented below:
 
-** Constant adjusting ** 
+** Constant Selection and Adjusting ** 
 
  The process of adjusting these constants was far too long (having gone through HUNDREDS of iterations) too completely recall exact
  values for documentation. However, the relevant proccess and our strategy for constant tuning is explained below. 
