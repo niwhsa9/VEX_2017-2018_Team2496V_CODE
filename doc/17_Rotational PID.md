@@ -30,11 +30,18 @@ The code for this loop is shown and commented below:
 
 ** Constant adjusting ** 
 
- The process of adjusting these constants was far too long (having gone through HUNDREDS of iterations) too completely recall for 
- documentation. However, the relevant proccess and our strategy for constant tuning is explained below. 
-0. Set all gains to 0 
-1. Increase P so that the 
-
+ The process of adjusting these constants was far too long (having gone through HUNDREDS of iterations) too completely recall exact
+ values for documentation. However, the relevant proccess and our strategy for constant tuning is explained below. 
+0. Set all gains to 0. Set desired turn value to 90*.
+1. Increase P so that the turn slightly overshoots the target (5-10*) and then stops, but cannot return due to P output being too low
+for motors 
+2. Now add the I term in order to help bring the robot back to the target after over shooting. This does make it overshoot more
+(due to error accumlating during the reaching target phase of the turn) but then helps bring the robot to the intended value. This 
+causes the robot to oscilate back and forth around the target tremndously for a few seconds. If it oscilates for more then a few seconds, decrease. If it does not reach the desired value and stops oscilating, increase. 
+3. The integral oscilations are helpful for reaching the target, but not so nice because they eat up valuable time and tend to shake the robot which is bad for the motors (rapid direction change), causes gyroscope drift to accumulate, and makes the robot drift horizontally
+if on omni-directional wheels. This can be fixed with derrivative which serves as a dampener. Add in the D term. 
+4. Increase D such that the robot applies "breaks" as it nears the target and slows tremndously. If the robot stops in the middle of the turn. Decrease D because stopping probably means the D has become too high and is counteracting the proportionality too strongly. If the robot is still oscilating at the integral, increase D. 
+5. Continue to modify D so that integral oscilations do not exceed 1-3 and the robot still is within 1-2 degrees of the target. If the robot is not quite reaching the target with an increased D, consider increasing P. 
 
 
 //integral totally different based on the max range because 
@@ -49,5 +56,6 @@ discussed above. Because of the need for PID on so many sub systems and its reus
 a child class, but rather another parent class or functionality of Subsystem itself. We will most likely create a pid() function in the
 super class Subsystem for clean code and reusablity. 
 
-In addition, more accurate methods for numerical integration exist than the one we currently have limited by cortex sample rate. We will most like
-attempt an implementation of trapezoid rule as an upgrade to the PID library. 
+In addition, more accurate methods for numerical integration exist than the one we currently have limited by cortex sample rate. We will most likely attempt an implementation of trapezoid rule as an upgrade to the PID library. 
+
+Yikes that was a long log. Fingers are bleeding. Control theory is super cool black magic ;) 
