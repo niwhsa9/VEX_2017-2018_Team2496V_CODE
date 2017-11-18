@@ -20,6 +20,7 @@ class DR4B : Subsystem{
       int getHeight(char h);
       bool prevOpComplete;
       bool safety;
+      bool isDown;
 
     private:
 
@@ -29,6 +30,7 @@ class DR4B : Subsystem{
       int startLiftR;
 
       const static float lK; //P loop constant
+      const static float alK; //P loop constant
       const static float dK; //D loop constant
       //Lift operating speed
       int liftSpeedL;

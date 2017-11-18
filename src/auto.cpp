@@ -2,7 +2,7 @@
 #include "ports.h"
 #include "robot.h"
 
-int autoMode = 2; //0
+int autoMode = 1; //0
 const char *autoModeStr[] = {
   "10 POINT L", "10 POINT R", "20 POINT L", "20 POINT R"
 };
@@ -30,13 +30,13 @@ void autonomous() {
       if(autoMode == 1) dir = -1;
       delay(500);
       drive->move(52, 127, -1, 2200);
-      lift->setDesired(300);
+      lift->setDesired(400);
       delay(600);
       drive->move(42, 127, 1, 2200);
       drive->turn(180, 80, -1 * dir);
       drive->move(11, 127, -1, 1000);
       drive->turn(30, 80, 1 * dir);
-      lift->setDesired(450);
+      lift->setDesired(470);
       drive->move(17, 127, -1, 1400);
       lift->setDesired(0);
       drive->move(40, 127, 1, 3000);

@@ -1,7 +1,7 @@
 #include "dr4b.h"
-const float DR4B::lK= 0.14f;
-const float DR4B::dK = 0.00f; //0.05
-
+const float DR4B::lK= 0.12f;
+const float DR4B::dK = 0.002f; //0.05
+const float DR4B::alK= 0.16f;
 DR4B::DR4B(const char *name, int motors[10],	int revField[10],
   const int num, int sensors[10], const char id=255):
   Subsystem(name, motors, revField, num, sensors, id)
@@ -52,8 +52,8 @@ void DR4B::setDesired(int position) {
 
 void DR4B::unpack() {
   int atime = millis();
-  setDesired(435);
-  while(!prevOpComplete && millis() - atime <= 300) moveTo();
+  setDesired(600);
+  while(!prevOpComplete && millis() - atime <= 650) moveTo();
   setDesired(0);
   atime = millis();
   while(!prevOpComplete && millis() - atime >= 500) {
@@ -82,8 +82,8 @@ void DR4B::moveTo() { //change position to percentage?
     int curErrorR = (desiredLift-currentLiftR);
     int curErrorL = (desiredLift-currentLiftL);
 
-    liftSpeedR = (lK * curErrorR) + (dK * (curErrorR-prevErrorR));
-    liftSpeedL = (lK * curErrorL) + (dK * (curErrorL-prevErrorL));
+    liftSpeedR = (lK * curErrorR) + (0 * (curErrorR-prevErrorR));
+    liftSpeedL = (lK * curErrorL) + (0 * (curErrorL-prevErrorL));
 
     prevErrorL = curErrorL;
     prevErrorR = curErrorR;
@@ -161,12 +161,13 @@ void DR4B::iterateCtl() {
   if(joystickGetDigital(1,6, JOY_UP)){                                                    //Take input as close to fixed sample rate
     if((millis()- prevTime) >= 10) {
       prevTime = millis();
-      desiredLift+=14;                                                                    //Increase desired position when given corresponding input
+      desiredLift+=18; //14                                                                   //Increase desired position when given corresponding input
     }
   } else if (joystickGetDigital(1,6,JOY_DOWN)){                                           //Take input as close to fixed sample rate
     if((millis() - prevTime) >= 10) {
       prevTime = millis();
-      desiredLift-=14;                                                                    //Decrease desired position when given corresponding input
+      //desiredLift-=18;
+      isDown = true;                                                          //Decrease desired position when given corresponding input
     }
   } else if(joystickGetDigital(1,8, JOY_UP)){
     if(millis() - prevTime >= 10) {
@@ -187,18 +188,33 @@ void DR4B::iterateCtl() {
   if(desiredLift > DR4B_MAX) desiredLift = DR4B_MAX;                                      //Bounds check, do not try to force lift past physical limit
   else if (desiredLift < 5) desiredLift = 5;
 
+  if(joystickGetDigital(1,6,JOY_DOWN) != true && isDown == true) {
+    isDown = false;
+    desiredLift = currentLiftL-18*2;
+
+  }
+
   int curErrorR = (desiredLift-currentLiftR);                                             //Calculate error between desired and actual
   int curErrorL = (desiredLift-currentLiftL);
-                                                                                        //Add proportional and derrivitave components for control outpt
+  if(!isDown) {
+                                                                            //Add proportional and derrivitave components for control outpt
   liftSpeedR = (lK * curErrorR) + (dK * (curErrorR-prevErrorR));
 
   liftSpeedL = liftSpeedR;
-
+} else {
+  if(currentLiftL >= 0) {
+  liftSpeedL = -90;
+  liftSpeedR = -90;
+} else {
+  liftSpeedL = -20;
+  liftSpeedR =-20;
+}
+}
   //liftSpeedL = (lK * curErrorL) + (dK * (curErrorL-prevErrorL));
                                                                                           /**                                                               **
                                                                                           * Proportional: constant x error. Apply more correction for larger *
                                                                                           * error                                                            *
-                                                                                          *------------------------------------------------------------------*                                                 *
+                                                                                *------------------------------------------------------------------*                                                 *
                                                                                           * Derrivitave: constant x instantaneous rate of change.            *
                                                                                           * Apply more correction with larger change                         *
                                                                                           **                                                                **/
