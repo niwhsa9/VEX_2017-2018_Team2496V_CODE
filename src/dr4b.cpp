@@ -1,7 +1,7 @@
 #include "dr4b.h"
 const float DR4B::lK= 0.12f;
 const float DR4B::dK = 0.002f; //0.05
-const float DR4B::alK= 0.16f;
+const float DR4B::alK= 0.15f;
 DR4B::DR4B(const char *name, int motors[10],	int revField[10],
   const int num, int sensors[10], const char id=255):
   Subsystem(name, motors, revField, num, sensors, id)
@@ -52,11 +52,11 @@ void DR4B::setDesired(int position) {
 
 void DR4B::unpack() {
   int atime = millis();
-  setDesired(600);
-  while(!prevOpComplete && millis() - atime <= 650) moveTo();
-  setDesired(0);
+  setDesired(500);
+  while(!prevOpComplete && millis() - atime <= 550) moveTo();
+  setDesired(50);
   atime = millis();
-  while(!prevOpComplete && millis() - atime >= 500) {
+  while(!prevOpComplete) {
     //printf("height %d", getHeight('l'));
     moveTo();
   }

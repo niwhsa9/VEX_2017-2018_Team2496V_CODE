@@ -28,7 +28,7 @@ void autonomous() {
     if(autoMode == 0 || autoMode == 1) {
       int dir = 1;
       if(autoMode == 1) dir = -1;
-      delay(500);
+      delay(900);
       drive->move(52, 127, -1, 2200);
       lift->setDesired(400);
       delay(600);
@@ -36,7 +36,7 @@ void autonomous() {
       drive->turn(180, 80, -1 * dir);
       drive->move(11, 127, -1, 1000);
       drive->turn(30, 80, 1 * dir);
-      lift->setDesired(470);
+      lift->setDesired(700);
       drive->move(17, 127, -1, 1400);
       lift->setDesired(0);
       drive->move(40, 127, 1, 3000);
