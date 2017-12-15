@@ -15,12 +15,8 @@ class DR4B : Subsystem{
   		int eStop();
       void init();
       bool safe();
-      void setDesired(int position);
-      void unpack();
       int getHeight(char h);
-      bool prevOpComplete;
       bool safety;
-      bool isDown;
 
     private:
 
@@ -29,25 +25,19 @@ class DR4B : Subsystem{
       int startLiftL;
       int startLiftR;
 
-      const static float lK; //P loop constant
-      const static float alK; //P loop constant
-      const static float dK; //D loop constant
-      //Lift operating speed
       int liftSpeedL;
       int liftSpeedR;
 
       int desiredLift; //desired position (as a zeroed potentiometer value)
       int prevTime;
 
-      //lift ports
-      int _tr;
-      int _br;
-      int _tl;
-      int _bl;
+      //lift port
+      int _r;
+      int _l;
 
       //sensors
-      int _lp;
-      int _rp;
+      int _le;
+      int _re;
 
       int prevErrorL;
       int prevErrorR;

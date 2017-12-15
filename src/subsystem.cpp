@@ -12,23 +12,8 @@ _name(name), _num(num), _id(id)
 	for(int i = 0; i < 10; i++) _revField[i] = revField[i];
 	for(int i = 0; i < 10; i++) _motors[i] = motors[i];
 	for(int i = 0; i < 10; i++) _sensors[i] = sensors[i];
-	//while(1) printf("DEBUG: %d", _revField[2]);
-	//memcpy(_revField, revField, 10 * sizeof(int));
-	//t = revField[2];
-	//printf("DEBUG: %d", _revField[2]);
-	//revField
 };
-/*
-Subsystem::Subsystem(const char *name, const int *motors, const int *revField,
-	int num, const int *sensors=(const int *)malloc(1), char id=255) {
-		_name = name;
-		_motors = motors;
-		_revField = revField;
-		_num = num;
-		_sensors = sensors;
-		_id = id;
-	}
-*/
+
 Subsystem::~Subsystem() {
 	//delete _motors;
 	//delete _revField;
@@ -46,10 +31,30 @@ void Subsystem::setMotor(int id, int speed) {
 void Subsystem::setAll(int speed) {
 		for(int i = 0; i < _num; i++) {
 				motorSet(_motors[i], speed * _revField[i]);
-
-				//motorSet(6, 100);
-				//printf("\n %d %d", _motors[i], _revField[i]*speed);
 		}
 		//printf("\n \n \n");
 		return;
+}
+void Subsystem::setPID(float p, float i, float d, int limit) {
+		pK = p;
+		iK = i;
+		dK = d;
+		integ_limit = limit;
+		integ_data = 0;
+		prevError = 0;
+		integ_count = 0;
+}
+
+float Subsystem::PID(float error) {
+	float p = pK * error;
+	float i = iK * (integ_data+=error);
+	float d = dK * (error - prevError);
+ 	float PID = p + i + d;
+	prevError = error;
+	integ_count++;
+	if(integ_count >= integ_limit) {
+		integ_data = 0;
+		integ_count = 0;
+	}
+	return PID;
 }
