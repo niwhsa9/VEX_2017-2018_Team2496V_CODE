@@ -28,6 +28,7 @@ void operatorControl() {
     mogolift->iterateCtl();
 		claw->iterateCtl();
 		drive->iterateCtl(); //Direct control
+    integrator->iterateCtl();
 		delay(10);
 	}
 }//}

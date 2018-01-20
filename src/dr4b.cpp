@@ -1,3 +1,4 @@
+
 #include "dr4b.h"
 
 DR4B::DR4B(const char *name, int motors[10],	int revField[10],
@@ -11,9 +12,9 @@ int DR4B::getHeight(char h) {
 //  printf("MOTOR 1 %d", _motors[1]);
   if(h=='l') {
     //printf("\n %d", _revField[2]);
-    return analogRead(_sensors[0]);
+    return encoderGet(_le);
   } else {
-    return analogRead(_sensors[1]);
+    return encoderGet(_re);
   }
 }
 
@@ -24,6 +25,11 @@ int DR4B::getHeight(char h) {
 void DR4B::init() {
   _l = _motors[0];
   _r = _motors[1];
+  _re = encoderInit(D_LIFT_ENC_R2,D_LIFT_ENC_R1, true); //CHANGE FROM HARDCODE
+  _le = encoderInit(D_LIFT_ENC_L2, D_LIFT_ENC_L1, true); //CHANGE FROM HARDCODE
+  setPID(3.4, 0.0, 0.0, 1000000);
+  setAltPID(0.0, 0.0, 0.0);
+  desiredLift = 0;
 }
 
 /*
@@ -47,16 +53,12 @@ void DR4B::init() {
 * Secondary control set, no control loop
 */
 void DR4B::backup() {
-  if(joystickGetDigital(1, 7, JOY_RIGHT)) {
-    safety = false;
-    desiredLift = 0;
-  }
-  if(joystickGetDigital(1,6, JOY_UP)){
-    setAll(80);
-  } else if (joystickGetDigital(1,6,JOY_DOWN)){
-    setAll(-80);
+  if(joystickGetDigital(2,6, JOY_UP)){
+    setAll(127);
+  } else if (joystickGetDigital(2,6,JOY_DOWN)){
+    setAll(-127);
   } else setAll(0);
-  if(joystickGetDigital(1,5, JOY_UP)){ //rm
+  if(joystickGetDigital(2,5, JOY_UP)){ //rm
      motorSet(6, 40);
     //setMotor(1, 127);
   } else motorSet(6, 0);
@@ -86,5 +88,19 @@ int DR4B::eStop() {
 * TODO: Integral component
 */
 void DR4B::iterateCtl() {
-  backup();
+  int speed = 0;
+  if(joystickGetDigital(2,6, JOY_UP)){
+    speed = 120;
+  } else if (joystickGetDigital(2,6,JOY_DOWN)){
+    speed = -120;
+  } else speed = 0;
+  //if(desiredLift<=0) desiredLift = 0;
+  float error = (desiredLift-getHeight('r'));
+  float rightMotor = desiredLift;//PID(error);
+  float leftMotor = desiredLift;//PID(getHeight('r') - getHeight('l'));
+
+  //printf("speed %f  error %f \n", rightMotor, error);
+  //printf("right %f  left %f \n", rightMotor , leftMotor);
+  setMotor(0, speed);
+  setMotor(1, speed);
 }

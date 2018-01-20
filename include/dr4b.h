@@ -36,8 +36,8 @@ class DR4B : Subsystem{
       int _l;
 
       //sensors
-      int _le;
-      int _re;
+      Encoder _le;
+      Encoder _re;
 
       int prevErrorL;
       int prevErrorR;

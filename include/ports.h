@@ -8,27 +8,26 @@
 #define D_DRIVE_ENC_R2 0
 #define D_DRIVE_ENC_L1 0
 #define D_DRIVE_ENC_L2 0
-#define D_LIFT_ENC_R1 0
-#define D_LIFT_ENC_R2 0
-#define D_LIFT_ENC_L1 0
-#define D_LIFT_ENC_L2 0
+#define D_LIFT_ENC_R1 6
+#define D_LIFT_ENC_R2 5
+#define D_LIFT_ENC_L1 4
+#define D_LIFT_ENC_L2 3
 
 
 //analog sensors (1-10)
 #define A_DRIVE_GYRO 1
 
 //motor (1-10)
-#define M_LIFT_R 0
-#define M_LIFT_L 0
-#define M_DRIVE_BL 0
-#define M_DRIVE_BR 0
-#define M_DRIVE_FL 0
-#define M_DRIVE_FR 0
-#define M_CLAW 0
-#define M_MOGO_L 0
-#define M_MOGO_R 0
-#define M_INTEG 0
-
+#define M_LIFT_R 8
+#define M_LIFT_L 3
+#define M_DRIVE_BL 9
+#define M_DRIVE_BR 2
+#define M_DRIVE_FL 6
+#define M_DRIVE_FR 5
+#define M_CLAW 4
+#define M_MOGO_L 10
+#define M_MOGO_R 1
+#define M_INTEG 7
 
 
 

@@ -27,7 +27,9 @@ class Subsystem {
 		virtual int eStop() = 0; //Emergency stop functionality
 		~Subsystem(); //Destructor for memory cleanup
 		void setPID(float p, float i, float d, int integ_limit);
+		void setAltPID(float p, float i, float d);
 		float PID(float error);
+		float altPID(float error);
 	protected:
 		const char *_name; //Generic string identifier
 		int _motors[10]; //Associated motor ports
@@ -38,11 +40,19 @@ class Subsystem {
 		float pK;
 		float iK;
 		float dK;
-		float error;
+
 		float prevError;
 		float integ_data;
 		int integ_limit;
 		int integ_count;
+
+		float aerror;
+		float aprevError;
+		float ainteg_data;
+
+		float apK;
+		float aiK;
+		float adK;
 };
 
 

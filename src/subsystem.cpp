@@ -44,6 +44,12 @@ void Subsystem::setPID(float p, float i, float d, int limit) {
 		prevError = 0;
 		integ_count = 0;
 }
+void Subsystem::setAltPID(float p, float i, float d) {
+		apK = p;
+		aiK = i;
+		adK = d;
+
+}
 
 float Subsystem::PID(float error) {
 	float p = pK * error;
@@ -55,6 +61,18 @@ float Subsystem::PID(float error) {
 	if(integ_count >= integ_limit) {
 		integ_data = 0;
 		integ_count = 0;
+	}
+	return PID;
+}
+
+float Subsystem::altPID(float error) {
+	float p = pK * error;
+	float i = iK * (ainteg_data+=error);
+	float d = dK * (error - aprevError);
+ 	float PID = p + i + d;
+	aprevError = error;
+	if(integ_count >= integ_limit) {
+		ainteg_data = 0;
 	}
 	return PID;
 }

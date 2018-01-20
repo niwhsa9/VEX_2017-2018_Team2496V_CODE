@@ -6,6 +6,7 @@ DR4B* lift;
 Drive* drive;
 Claw* claw;
 MogoLift* mogolift;
+Integrator* integrator;
 int prevButtonEvent = millis();
 char page = 0;
 char numPages = 5;
@@ -13,7 +14,7 @@ char numPages = 5;
 void subsystemInit() {
   /* LIFT INITALIZATION */
   int liftMotors[10] = {M_LIFT_L, M_LIFT_R};
-  int liftRev[10] = {-1, -1};
+  int liftRev[10] = {1, -1};
 
   //while(1) printf("%d", liftRev[2]);
   int liftSensors[10] = {D_LIFT_ENC_L1,D_LIFT_ENC_L2,D_LIFT_ENC_R1,D_LIFT_ENC_R2};
@@ -21,7 +22,7 @@ void subsystemInit() {
   lift->init();
 
   int driveMotors[10] = {M_DRIVE_FR, M_DRIVE_BR, M_DRIVE_FL, M_DRIVE_BL};
-  int driveRev[10] = {-1, -1, 1, 1};
+  int driveRev[10] = {-1, -1, -1, -1};
   int driveSensors[10] = {D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, A_DRIVE_GYRO};
   drive = new Drive("", driveMotors, driveRev, 4, driveSensors, 1); //4 ports, 6 motors
   drive->init();
@@ -37,6 +38,12 @@ void subsystemInit() {
   int mogoSensors[10] = {};
   mogolift = new MogoLift("", mogoMotors, mogoRev, 2, mogoSensors, 2); //4 ports, 6 motors
   mogolift->init();
+
+  int integMotors[10] = {M_INTEG};
+  int integRev[10] = {1};
+  int integSensors[10] = {};
+  integrator = new Integrator("", integMotors, integRev, 1, integSensors, 1); //4 ports, 6 motors
+  integrator->init();
 
   isSubInit = true;
 }
