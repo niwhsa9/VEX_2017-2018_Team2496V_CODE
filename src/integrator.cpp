@@ -42,7 +42,23 @@ void Integrator::setEm(int speed) { setAll(speed); }
 * Main control loop with user input
 */
 void Integrator::iterateCtl() {
+  printf("\n int %d \n",analogRead(4));
+  int speed = 0;
+  if(stage < 2) {
+    if(analogRead(4) > INTEG_BOT) speed = -127;
+    else if(analogRead(4) <= INTEG_BOT) speed = -14;
+
+  } else if(stage == 2) {
+    if(analogRead(4) < INTEG_TOP) speed = 127;
+    else if(analogRead(4) >= INTEG_TOP) {
+      speed = 14;
+      //clawSet(-50);
+    }
+  }
+ setAll(speed);
+  /*
   if(joystickGetDigital(2, 5, JOY_UP)) setAll(90);
   else if(joystickGetDigital(2, 5, JOY_DOWN)) setAll(-90);
   else setAll(0);
+  printf("%d \n", analogRead(4));*/
 }

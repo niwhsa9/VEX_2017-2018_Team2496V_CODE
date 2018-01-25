@@ -14,7 +14,7 @@ class Integrator : Subsystem{
   		int eStop();
       void init();
       void setEm(int speed);
-
+      void setStack(int stck, int stg);
 
     private:
 
@@ -22,7 +22,6 @@ class Integrator : Subsystem{
       int _m;
 
       int _pot;
-
 
 };
 #endif

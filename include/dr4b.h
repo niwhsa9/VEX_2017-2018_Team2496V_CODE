@@ -17,10 +17,11 @@ class DR4B : Subsystem{
       bool safe();
       int getHeight(char h);
       bool safety;
-
+      void setConst(char c, float f);
+      void setStack(int stck, int stg);
     private:
 
-
+  int desiredLift;
       //Starting potentiometer values for each side of the lift
       int startLiftL;
       int startLiftR;
@@ -28,7 +29,7 @@ class DR4B : Subsystem{
       int liftSpeedL;
       int liftSpeedR;
 
-      int desiredLift; //desired position (as a zeroed potentiometer value)
+     //desired position (as a zeroed potentiometer value)
       int prevTime;
 
       //lift port
@@ -36,10 +37,12 @@ class DR4B : Subsystem{
       int _l;
 
       //sensors
-      Encoder _le;
-      Encoder _re;
+      int pot;
+
 
       int prevErrorL;
       int prevErrorR;
+
+  
 };
 #endif

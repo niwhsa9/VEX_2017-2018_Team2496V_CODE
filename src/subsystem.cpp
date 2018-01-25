@@ -50,11 +50,18 @@ void Subsystem::setAltPID(float p, float i, float d) {
 		adK = d;
 
 }
+void Subsystem::setConst(char c, float val) {
+		if(c == 'P') pK = val;
+		else if(c == 'I') iK = val;
+		else if(c == 'D') dK = val;
+}
 
 float Subsystem::PID(float error) {
-	float p = pK * error;
-	float i = iK * (integ_data+=error);
-	float d = dK * (error - prevError);
+	float deltaT = millis() - prevTime;
+	prevTime = millis();
+	p = pK * error;
+	i = iK * (integ_data+=error);
+	d = dK * (error - prevError)/deltaT;
  	float PID = p + i + d;
 	prevError = error;
 	integ_count++;

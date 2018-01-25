@@ -24,7 +24,7 @@ OUT:=$(BINDIR)/$(OUTNAME)
 .PHONY: all clean upload _force_look
 
 # By default, compile program
-all: $(BINDIR) $(OUT)
+all: $(BINDIR) $(OUT) 
 
 # Remove all intermediate object files (remove the binary directory)
 clean:

@@ -54,6 +54,7 @@ int Claw::eStop() {
 * Main control loop with user input
 */
 void Claw::iterateCtl() {
+
   if (joystickGetDigital(1, 5, JOY_UP) && joystickGetDigital(1, 5, JOY_DOWN)) {
     setMotor(0, 30);
   }

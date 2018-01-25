@@ -30,6 +30,8 @@ class Subsystem {
 		void setAltPID(float p, float i, float d);
 		float PID(float error);
 		float altPID(float error);
+		void setConst(char c, float val);
+		float p, i, d;
 	protected:
 		const char *_name; //Generic string identifier
 		int _motors[10]; //Associated motor ports
@@ -53,6 +55,7 @@ class Subsystem {
 		float apK;
 		float aiK;
 		float adK;
+		long prevTime;
 };
 
 

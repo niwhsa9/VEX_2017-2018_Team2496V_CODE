@@ -8,15 +8,11 @@
 #define D_DRIVE_ENC_R2 0
 #define D_DRIVE_ENC_L1 0
 #define D_DRIVE_ENC_L2 0
-#define D_LIFT_ENC_R1 6
-#define D_LIFT_ENC_R2 5
-#define D_LIFT_ENC_L1 4
-#define D_LIFT_ENC_L2 3
-
 
 //analog sensors (1-10)
 #define A_DRIVE_GYRO 1
-
+#define A_LIFT_POT 3
+#define A_INTEG_POT 4
 //motor (1-10)
 #define M_LIFT_R 8
 #define M_LIFT_L 3
@@ -32,6 +28,16 @@
 
 
 /* DRIVE DEFINES */
+#define DR4B_START 2540
+#define INTEG_TOP 2900
+#define INTEG_BOT 770
+#define INTEG_GO 300
+
+extern int stackHeight;
+extern int stage;
+extern int dCmd;
+void clawSet(int des);
+
 #define DRIVE_TURN_THRESHOLD 2
 #define DRIVE_MOVE_THRESHOLD 2
 #define DRIVE_MIN_SPEED 35

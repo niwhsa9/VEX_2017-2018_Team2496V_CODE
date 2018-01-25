@@ -84,7 +84,7 @@ void MogoLift::setEm(int speed) { setAll(speed); }
 * Main control loop with user input
 */
 void MogoLift::iterateCtl() {
-  if(joystickGetDigital(1, 6, JOY_UP)) setAll(-90);
-  else if(joystickGetDigital(1, 6, JOY_DOWN)) setAll(90);
+  if(joystickGetDigital(1, 7, JOY_UP)) setAll(-90);
+  else if(joystickGetDigital(1, 7, JOY_DOWN)) setAll(90);
   else setAll(0);
 }

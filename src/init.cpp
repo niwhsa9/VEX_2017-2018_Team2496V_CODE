@@ -1,6 +1,7 @@
 #include "main.h"
 #include "ports.h"
 #include "robot.h"
+#include "JINX.h"
 bool isSubInit = false;
 DR4B* lift;
 Drive* drive;
@@ -17,7 +18,7 @@ void subsystemInit() {
   int liftRev[10] = {1, -1};
 
   //while(1) printf("%d", liftRev[2]);
-  int liftSensors[10] = {D_LIFT_ENC_L1,D_LIFT_ENC_L2,D_LIFT_ENC_R1,D_LIFT_ENC_R2};
+  int liftSensors[10] = {A_LIFT_POT};
   lift = new DR4B("", liftMotors, liftRev, 2, liftSensors, 0);
   lift->init();
 
@@ -41,7 +42,7 @@ void subsystemInit() {
 
   int integMotors[10] = {M_INTEG};
   int integRev[10] = {1};
-  int integSensors[10] = {};
+  int integSensors[10] = {A_INTEG_POT};
   integrator = new Integrator("", integMotors, integRev, 1, integSensors, 1); //4 ports, 6 motors
   integrator->init();
 
@@ -129,6 +130,9 @@ void initializeIO() {
 
 void initialize() {
   setTeamName("2496V");              //BHS Robopatty V :D
+  initJINX(stdout);
+  delay(100);
+  taskCreate(JINXRun, TASK_DEFAULT_STACK_SIZE, NULL, (TASK_PRIORITY_DEFAULT));
   subsystemInit();                   //Initalize subsystems for autonomous
   lcdInit(uart2);                    //Initalize LCD display
   lcdSetBacklight(uart2, true);      //Enable the backlight to make text more visible

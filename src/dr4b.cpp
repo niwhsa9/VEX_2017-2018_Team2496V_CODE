@@ -1,6 +1,10 @@
 
 #include "dr4b.h"
 
+int prev = 0;
+int prev2 = 0;
+float rightMotor = 0;
+
 DR4B::DR4B(const char *name, int motors[10],	int revField[10],
   const int num, int sensors[10], const char id=255):
   Subsystem(name, motors, revField, num, sensors, id)
@@ -9,13 +13,9 @@ DR4B::DR4B(const char *name, int motors[10],	int revField[10],
 * Read potentiometer on specified side
 */
 int DR4B::getHeight(char h) {
-//  printf("MOTOR 1 %d", _motors[1]);
-  if(h=='l') {
-    //printf("\n %d", _revField[2]);
-    return encoderGet(_le);
-  } else {
-    return encoderGet(_re);
-  }
+
+    return DR4B_START - analogRead(_sensors[0]);
+
 }
 
 /*
@@ -25,9 +25,8 @@ int DR4B::getHeight(char h) {
 void DR4B::init() {
   _l = _motors[0];
   _r = _motors[1];
-  _re = encoderInit(D_LIFT_ENC_R2,D_LIFT_ENC_R1, true); //CHANGE FROM HARDCODE
-  _le = encoderInit(D_LIFT_ENC_L2, D_LIFT_ENC_L1, true); //CHANGE FROM HARDCODE
-  setPID(3.4, 0.0, 0.0, 1000000);
+
+  setPID(0.4, 0.0, 7.0, 1000000);
   setAltPID(0.0, 0.0, 0.0);
   desiredLift = 0;
 }
@@ -69,8 +68,41 @@ void DR4B::backup() {
 * Debug
 */
 void DR4B::debug() {
-  printf("LEFT %d \n", getHeight('l')-startLiftL);
-  printf("RIGHT %d \n", getHeight('r')-startLiftR);
+  /*if(millis() - prev >= 5000) {
+    char PIDV[20];
+    sprintf(PIDV, "%f %f %f", pK, iK, dK);
+    writeJINXMessage(PIDV);
+    prev = millis();
+  }
+  */
+  if(millis() - prev2 >= 100) {
+    //char actual[10];
+    /*
+    sprintf(actual, "%d", getHeight('l'));
+    writeJINXData("actual", actual);
+
+    char desired[10];
+    sprintf(desired, "%d", desiredLift);
+    writeJINXData("desired", desired); */
+
+
+/*
+    char de[10];
+    sprintf(de, "%f", d);
+    writeJINXData("derrivative", de);
+
+    char pe[10];
+    sprintf(pe, "%f", p);
+    writeJINXData("proportional", pe);
+*/
+/*
+  char spedz[10];
+  sprintf(spedz, "%f", rightMotor);
+  writeJINXData("spedz", spedz);
+    prev2 = millis();
+*/
+  //printf("\n %f", rightMotor);
+  }
 }
 
 /*
@@ -89,18 +121,77 @@ int DR4B::eStop() {
 */
 void DR4B::iterateCtl() {
   int speed = 0;
+
+  if(stage == 0) {
+    if(millis() - dCmd >= 400) {
+      desiredLift = 0;
+    } else {
+      desiredLift += 5;
+    }
+  }
+  else if (stage == 1) {
+    if(desiredLift - getHeight('c') <= INTEG_GO) stage = 2;
+    desiredLift = (stackHeight-1) * 100 + 50;
+    /*
+    switch(stackHeight) {
+      case 0:
+        desiredLift = 0;
+        break;
+      case 1:
+        desiredLift = 50;
+        break;
+      case 2:
+        desiredLift = 155;
+        break;
+      case 3:
+        desiredLift = 270;
+        break;
+      case 4:
+        desiredLift = 450;
+        break;
+      case 5:
+        desiredLift = 550;
+        break;
+      case 6:
+        desiredLift = 650;
+        break;
+      case 7:
+        desiredLift = 750;
+        break;
+
+      default:
+        break;
+    }*/
+  }
+
+
+  /*
   if(joystickGetDigital(2,6, JOY_UP)){
     speed = 120;
+    desiredLift+=20;
   } else if (joystickGetDigital(2,6,JOY_DOWN)){
+    desiredLift-=20;
     speed = -120;
-  } else speed = 0;
-  //if(desiredLift<=0) desiredLift = 0;
+  } else speed = 0; */
+
+  if(desiredLift<=0) desiredLift = 0;
+  //if(joystickGetDigital(2, 7, JOY_DOWN)) desiredLift= 1000;
   float error = (desiredLift-getHeight('r'));
-  float rightMotor = desiredLift;//PID(error);
-  float leftMotor = desiredLift;//PID(getHeight('r') - getHeight('l'));
+  rightMotor = PID(error);
+  float leftMotor = rightMotor;
+  printf("height %d \n", getHeight('l'));
 
   //printf("speed %f  error %f \n", rightMotor, error);
   //printf("right %f  left %f \n", rightMotor , leftMotor);
-  setMotor(0, speed);
-  setMotor(1, speed);
+
+  setMotor(0, leftMotor);
+  setMotor(1, rightMotor);
+
+
+
+  //printf(height);
+}
+
+void DR4B::setConst(char c, float f) {
+  Subsystem::setConst(c, f);
 }

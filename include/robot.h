@@ -14,6 +14,7 @@ extern MogoLift *mogolift;
 extern Integrator *integrator;
 /* Subsystem defines */
 extern bool isSubInit;
+
 void subsystemInit();
 
 /* AUTON  */
