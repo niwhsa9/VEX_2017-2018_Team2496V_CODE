@@ -124,44 +124,19 @@ void DR4B::iterateCtl() {
 
   if(stage == 0) {
     if(millis() - dCmd >= 400) {
-      desiredLift = 0;
+      desiredLift = 0 + offset;
     } else {
       desiredLift += 5;
     }
   }
   else if (stage == 1) {
     if(desiredLift - getHeight('c') <= INTEG_GO) stage = 2;
-    desiredLift = (stackHeight-1) * 100 + 50;
-    /*
-    switch(stackHeight) {
-      case 0:
-        desiredLift = 0;
-        break;
-      case 1:
-        desiredLift = 50;
-        break;
-      case 2:
-        desiredLift = 155;
-        break;
-      case 3:
-        desiredLift = 270;
-        break;
-      case 4:
-        desiredLift = 450;
-        break;
-      case 5:
-        desiredLift = 550;
-        break;
-      case 6:
-        desiredLift = 650;
-        break;
-      case 7:
-        desiredLift = 750;
-        break;
-
-      default:
-        break;
-    }*/
+    desiredLift = ((stackHeight-1) * 100 + firstCone);
+  } else if (stage == 3) {
+    setMotor(0, joystickGetAnalog(2, 3));
+    setMotor(1, joystickGetAnalog(2, 3));
+    return;
+    //desiredLift += (int)((float)joystickGetAnalog(2, 3)/5.0);
   }
 
 

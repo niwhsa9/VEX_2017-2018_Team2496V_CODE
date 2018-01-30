@@ -17,8 +17,6 @@ void Integrator::init() {
 }
 
 
-
-
 /*
 * Debug
 */
@@ -44,18 +42,24 @@ void Integrator::setEm(int speed) { setAll(speed); }
 void Integrator::iterateCtl() {
   printf("\n int %d \n",analogRead(4));
   int speed = 0;
-  if(stage < 2) {
-    if(analogRead(4) > INTEG_BOT) speed = -127;
-    else if(analogRead(4) <= INTEG_BOT) speed = -14;
+    if(stage < 2) {
+      if(analogRead(4) > INTEG_BOT) speed = -127;
+      else if(analogRead(4) <= INTEG_BOT) speed = -14;
 
-  } else if(stage == 2) {
-    if(analogRead(4) < INTEG_TOP) speed = 127;
-    else if(analogRead(4) >= INTEG_TOP) {
+    } else if(stage == 2) {
+      if(analogRead(4) < INTEG_TOP) speed = 127;
+      else if(analogRead(4) >= INTEG_TOP) {
       speed = 14;
       //clawSet(-50);
     }
+  } else if (stage == 3){
+    if(joystickGetDigital(2, 5, JOY_UP)) speed = 127;
+    else if(joystickGetDigital(2, 5, JOY_DOWN)) speed = -127;
+    else speed = 0;
+    manualLock = false;
   }
  setAll(speed);
+
   /*
   if(joystickGetDigital(2, 5, JOY_UP)) setAll(90);
   else if(joystickGetDigital(2, 5, JOY_DOWN)) setAll(-90);

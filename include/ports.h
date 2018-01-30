@@ -28,14 +28,18 @@
 
 
 /* DRIVE DEFINES */
-#define DR4B_START 2540
-#define INTEG_TOP 2900
-#define INTEG_BOT 770
+#define DR4B_START 2520
+#define LOADER_PRESET 450
+#define INTEG_TOP 2800
+#define INTEG_BOT 780
 #define INTEG_GO 300
 
 extern int stackHeight;
 extern int stage;
 extern int dCmd;
+extern int offset;
+extern int manualLock;
+extern int firstCone;
 void clawSet(int des);
 
 #define DRIVE_TURN_THRESHOLD 2

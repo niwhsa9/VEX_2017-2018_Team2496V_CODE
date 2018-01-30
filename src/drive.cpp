@@ -282,9 +282,10 @@ void Drive::iterateCtl() {
       speed[i] = (((float)js[i]/127) * ((float)js[i]/127)) * 127 * dir;
 
   }
-  int left =(int) speed[0];
-  int right = (int) speed[1];
-
+  int left =(int) speed[0] + (joystickGetAnalog(2, 2) + joystickGetAnalog(2, 1));
+  int right = (int) speed[1] +  (joystickGetAnalog(2, 2) - joystickGetAnalog(2, 1));
+  if(abs(left) <= 20) left = 0;
+  if(abs(right) <= 20) right = 0;
 //  printf("left %d", left);
 //  printf("right %d", right);
 setDrive(left, right);
