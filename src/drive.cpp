@@ -15,8 +15,8 @@ N:  50     =    70     =      =       =       =
 
 
 const float Drive::pK = 4.8f; //6.8f
-const float Drive::iK = 0.05f; //0.07f
-const float Drive::dK = 50.5; //0.0
+const float Drive::iK = 0.00f; //0.07f
+const float Drive::dK = 0.0; //0.0
 const int Drive::integ_limit = 20;
 
 const float Drive::dpK = 0.3f; //3.0f
@@ -129,6 +129,8 @@ void Drive::move(float distance, int speed, int direction, unsigned int max_time
     int v_le = 0;
     int v_re = 0;
 
+    int prevTime = millis();
+
     bool flag = false;
     long stime = millis();
     int ltime = 0;
@@ -155,12 +157,13 @@ void Drive::move(float distance, int speed, int direction, unsigned int max_time
         integ_vle+= lerror;
         integ_vre+= rerror;
         integ_count++;
-
-        lSpeed = ((lerror * dpK) + ((lerror-prevlError) * ddK) + (integ_vle * diK)) * ((float)speed/127.0) * direction;
-        rSpeed = ((rerror * dpK) + ((rerror-prevrError) * ddK) + (integ_vre * diK)) * ((float)speed/127.0) * direction;
-        //rSpeed = lSpeed;
+        float deltaT = (millis()-prevTime);
+        prevTime = millis();
+        lSpeed = ((lerror * dpK) + ((lerror-prevlError) * ddK)/deltaT + (integ_vle * diK)) * ((float)speed/127.0) * direction;
+        rSpeed = ((rerror * dpK) + ((rerror-prevrError) * ddK)/deltaT + (integ_vre * diK)) * ((float)speed/127.0) * direction;
+        rSpeed = lSpeed;
       //  printf("\ntarget %f vle: %d speed %f rle %d speed %f", ticks, v_le, lSpeed, v_re, rSpeed);
-      printf("\ntarget: %f vle: %d speed: %f", ticks, v_le, lSpeed);
+    //  printf("\ntarget: %f vle: %d speed: %f", ticks, v_le, lSpeed);
         setDrive((int)lSpeed, (int) rSpeed);
         prevlError = lerror;
         prevrError = rerror;
@@ -282,10 +285,10 @@ void Drive::iterateCtl() {
       speed[i] = (((float)js[i]/127) * ((float)js[i]/127)) * 127 * dir;
 
   }
-  int left =(int) speed[0] + (joystickGetAnalog(2, 2) + joystickGetAnalog(2, 1));
-  int right = (int) speed[1] +  (joystickGetAnalog(2, 2) - joystickGetAnalog(2, 1));
-  if(abs(left) <= 20) left = 0;
-  if(abs(right) <= 20) right = 0;
+  int left =(int) speed[0] + (joystickGetAnalog(2, 2) + joystickGetAnalog(2, 1))/2;
+  int right = (int) speed[1] +  (joystickGetAnalog(2, 2) - joystickGetAnalog(2, 1))/2;
+  if(abs(left) <= 15) left = 0;
+  if(abs(right) <= 15) right = 0;
 //  printf("left %d", left);
 //  printf("right %d", right);
 setDrive(left, right);

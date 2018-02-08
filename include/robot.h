@@ -17,6 +17,8 @@ extern bool isSubInit;
 
 void subsystemInit();
 
+extern TaskHandle lftTsk;
+
 /* AUTON  */
 extern int autoMode;
 extern const char *autoModeStr[];

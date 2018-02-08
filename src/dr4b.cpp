@@ -115,15 +115,34 @@ int DR4B::eStop() {
   return 0;
 }
 
+void DR4B::moveTo() {
+  if(desiredLift<=0) desiredLift = 0;
+  //if(joystickGetDigital(2, 7, JOY_DOWN)) desiredLift= 1000;
+  float error = (desiredLift-getHeight('r'));
+  rightMotor = PID(error);
+  float leftMotor = rightMotor;
+  //printf("height %d \n", getHeight('l'));
+
+  //printf("speed %f  error %f \n", rightMotor, error);
+  //printf("right %f  left %f \n", rightMotor , leftMotor);
+
+  setMotor(0, leftMotor);
+  setMotor(1, rightMotor);
+}
+
 /*
 * Main proportional/derrivitave control loop with user input
 * TODO: Integral component
 */
+void DR4B::setSpeed(int speed) {
+  setAll(speed);
+}
+
 void DR4B::iterateCtl() {
   int speed = 0;
 
   if(stage == 0) {
-    if(millis() - dCmd >= 400) {
+    if(millis() - dCmd >= 430) {
       desiredLift = 0 + offset;
     } else {
       desiredLift += 5;
@@ -158,6 +177,14 @@ void DR4B::iterateCtl() {
 
   //printf("speed %f  error %f \n", rightMotor, error);
   //printf("right %f  left %f \n", rightMotor , leftMotor);
+  if(stage == 0) {
+    if(millis() - dCmd >= 430) {
+        if(leftMotor > -10) {
+          leftMotor = -10;
+          rightMotor = -10;
+        }
+    }
+  }
 
   setMotor(0, leftMotor);
   setMotor(1, rightMotor);

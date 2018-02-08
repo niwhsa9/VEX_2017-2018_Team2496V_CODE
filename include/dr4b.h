@@ -10,6 +10,7 @@ class DR4B : Subsystem{
   		const int num, int sensors[10], const char id);
       void moveTo();
   		void debug();
+      void setSpeed(int speed);
   		void iterateCtl();
       void backup();
   		int eStop();
@@ -19,9 +20,10 @@ class DR4B : Subsystem{
       bool safety;
       void setConst(char c, float f);
       void setStack(int stck, int stg);
+      int desiredLift;
     private:
 
-  int desiredLift;
+
       //Starting potentiometer values for each side of the lift
       int startLiftL;
       int startLiftR;
@@ -43,6 +45,6 @@ class DR4B : Subsystem{
       int prevErrorL;
       int prevErrorR;
 
-  
+
 };
 #endif

@@ -12,6 +12,7 @@ int dCmd = millis();
 int offset = 0;
 int manualLock = true;
 int firstCone = 0;
+int sCmd = millis();
 
 bool r6U = false;
 bool r6D = false;
@@ -41,6 +42,7 @@ void operatorControl() {
 	if(isSubInit!=true) { //Ensure subsystems were created
 		subsystemInit();
 	}
+  if(lftTsk != NULL) taskDelete(lftTsk);
 	while (1) {
 		curTime = millis();
     if(joystickGetDigital(1, 6, JOY_UP) && !r6U) {
@@ -62,7 +64,7 @@ void operatorControl() {
       stackHeight = 0;
       stage = 0;
       dCmd = curTime;
-      manualLock - true;
+      manualLock = true;
       offset = 0;
     }
 
@@ -76,7 +78,7 @@ void operatorControl() {
     }
     if(joystickGetDigital(2, 8, JOY_DOWN)) offset = LOADER_PRESET;
 
-    if(abs(joystickGetAnalog(2, 3)) >= 10 ||
+    if(abs(joystickGetAnalog(2, 3)) >= 30 ||
     joystickGetDigital(2, 5, JOY_UP) || joystickGetDigital(2, 5, JOY_DOWN)) stage = 3;
 
     printf("%d \n", stackHeight);

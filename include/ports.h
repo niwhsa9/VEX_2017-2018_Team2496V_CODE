@@ -4,10 +4,10 @@
 //I2C Device ID's
 
 //Digital sensors (1-12)
-#define D_DRIVE_ENC_R1 0
-#define D_DRIVE_ENC_R2 0
-#define D_DRIVE_ENC_L1 0
-#define D_DRIVE_ENC_L2 0
+#define D_DRIVE_ENC_R1 1
+#define D_DRIVE_ENC_R2 2
+#define D_DRIVE_ENC_L1 11
+#define D_DRIVE_ENC_L2 12
 
 //analog sensors (1-10)
 #define A_DRIVE_GYRO 1
@@ -29,7 +29,7 @@
 
 /* DRIVE DEFINES */
 #define DR4B_START 2520
-#define LOADER_PRESET 450
+#define LOADER_PRESET 425
 #define INTEG_TOP 2800
 #define INTEG_BOT 780
 #define INTEG_GO 300
@@ -37,6 +37,7 @@
 extern int stackHeight;
 extern int stage;
 extern int dCmd;
+extern int sCmd;
 extern int offset;
 extern int manualLock;
 extern int firstCone;
