@@ -49,7 +49,11 @@ void Integrator::iterateCtl() {
     } else if(stage == 2) {
       if(analogRead(4) < INTEG_TOP) speed = 127;
       else if(analogRead(4) >= INTEG_TOP) {
-      speed = 14;
+      speed = 20;
+      if(stage != 4) {
+        //stage = 4;
+        sCmd = millis();
+      }
       //clawSet(-50);
     }
   } else if (stage == 3){

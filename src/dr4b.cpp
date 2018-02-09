@@ -145,13 +145,16 @@ void DR4B::iterateCtl() {
     if(millis() - dCmd >= 430) {
       desiredLift = 0 + offset;
     } else {
-      desiredLift += 5;
+      desiredLift += 12;
     }
   }
   else if (stage == 1) {
     if(desiredLift - getHeight('c') <= INTEG_GO) stage = 2;
     desiredLift = ((stackHeight-1) * 100 + firstCone);
-  } else if (stage == 3) {
+  } else if(stage == 4) {
+    if(millis()- sCmd <= 200) desiredLift -= 8;
+  }
+  else if (stage == 3) {
     setMotor(0, joystickGetAnalog(2, 3));
     setMotor(1, joystickGetAnalog(2, 3));
     return;
