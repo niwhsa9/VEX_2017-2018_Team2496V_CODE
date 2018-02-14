@@ -81,6 +81,8 @@ void operatorControl() {
     if(abs(joystickGetAnalog(2, 3)) >= 30 ||
     joystickGetDigital(2, 5, JOY_UP) || joystickGetDigital(2, 5, JOY_DOWN)) stage = 3;
 
+    if(joystickGetDigital(1, 7, JOY_LEFT)) autonomous();
+
     printf("%d \n", stackHeight);
     r6U = joystickGetDigital(1, 6, JOY_UP);
     r6D = joystickGetDigital(1, 6, JOY_DOWN);

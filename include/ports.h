@@ -10,7 +10,7 @@
 #define D_DRIVE_ENC_L2 12
 
 //analog sensors (1-10)
-#define A_DRIVE_GYRO 1
+#define A_DRIVE_GYRO 8
 #define A_LIFT_POT 3
 #define A_INTEG_POT 4
 //motor (1-10)
@@ -30,8 +30,8 @@
 /* DRIVE DEFINES */
 #define DR4B_START 2520
 #define LOADER_PRESET 425
-#define INTEG_TOP 2800
-#define INTEG_BOT 780
+#define INTEG_TOP 3000
+#define INTEG_BOT 890
 #define INTEG_GO 300
 
 extern int stackHeight;

@@ -20,7 +20,7 @@ const float Drive::dK = 0.0; //0.0
 const int Drive::integ_limit = 20;
 
 const float Drive::dpK = 0.3f; //3.0f
-const float Drive::diK = 0.05f; //0.07f
+const float Drive::diK = 0.00f; //0.07f
 const float Drive::ddK = 10; //0.0
 
 Drive::Drive(const char *name, int motors[10], int revField[10],
@@ -191,10 +191,151 @@ void Drive::move(float distance, int speed, int direction, unsigned int max_time
 
 }
 
+void Drive::encTurn(int ticks, int speed, int direction, unsigned int max_time) {
+
+    encoderReset(le);
+    encoderReset(re);
+    int v_le = 0;
+    int v_re = 0;
+
+    int prevTime = millis();
+
+    bool flag = false;
+    long stime = millis();
+    int ltime = 0;
+    float lSpeed = 0;
+    float rSpeed = 0;
+
+    int integ_vle = 0;
+    int integ_vre = 0;
+
+    int integ_count = 0;
+
+    int lerror = 0;
+    int rerror = 0;
+    int prevlError = 0;
+    int prevrError = 0;
+    //Check robot isn't at target within a threshold
+    while(true) {
+        //Grab integrated gyro value from PROS library
+        v_le = abs(encoderGet(le));
+        v_re = abs(encoderGet(re));
+
+        lerror = ticks-v_le;
+        rerror = ticks-v_re;
+        integ_vle+= lerror;
+        integ_vre+= rerror;
+        integ_count++;
+        float deltaT = (millis()-prevTime);
+        prevTime = millis();
+        lSpeed = ((lerror * dpK) + ((lerror-prevlError) * ddK)/deltaT + (integ_vle * diK)) * ((float)speed/127.0);
+        rSpeed = ((rerror * dpK) + ((rerror-prevrError) * ddK)/deltaT + (integ_vre * diK)) * ((float)speed/127.0);
+        rSpeed = lSpeed * direction;
+      //  printf("\ntarget %f vle: %d speed %f rle %d speed %f", ticks, v_le, lSpeed, v_re, rSpeed);
+    //  printf("\ntarget: %f vle: %d speed: %f", ticks, v_le, lSpeed);
+        setDrive((int)lSpeed, (int) rSpeed);
+        prevlError = lerror;
+        prevrError = rerror;
+
+        if(integ_count >= integ_limit) {
+          integ_vle = 0;
+          integ_vre = 0;
+          integ_count = 0;
+        }
+
+        if(abs(ticks-v_re) < DRIVE_MOVE_THRESHOLD && flag == false) {
+           flag = true;
+           ltime = millis();
+        } else if(abs(ticks-v_re)  < DRIVE_MOVE_THRESHOLD && flag == true) {
+            if(millis()-ltime >= 400) break; //3020 plz
+            //else flag = false;
+        } else if (flag == true && abs(ticks-v_re) > DRIVE_TURN_THRESHOLD) {
+            flag = false;
+        }
+
+        if(millis()-stime >= max_time) break;
+        delay(10);
+    }
+    setAll(0);  //Disable motors
+
+}
+
+void Drive::clugyencTurn(int ticks, int speed, int direction, unsigned int max_time) {
+
+    encoderReset(le);
+    encoderReset(re);
+    int v_le = 0;
+    int v_re = 0;
+
+    int prevTime = millis();
+
+    bool flag = false;
+    long stime = millis();
+    int ltime = 0;
+    float lSpeed = 0;
+    float rSpeed = 0;
+
+    int integ_vle = 0;
+    int integ_vre = 0;
+
+    int integ_count = 0;
+
+    int lerror = 0;
+    int rerror = 0;
+    int prevlError = 0;
+    int prevrError = 0;
+    //Check robot isn't at target within a threshold
+    while(true) {
+        //Grab integrated gyro value from PROS library
+        v_le = abs(encoderGet(le));
+        v_re = abs(encoderGet(re));
+
+        lerror = ticks-v_le;
+        rerror = ticks-v_re;
+        integ_vle+= lerror;
+        integ_vre+= rerror;
+        integ_count++;
+        float deltaT = (millis()-prevTime);
+        prevTime = millis();
+        lSpeed = -((lerror * dpK) + ((lerror-prevlError) * ddK)/deltaT + (integ_vle * diK)) * ((float)speed/127.0);
+        rSpeed = ((rerror * dpK) + ((rerror-prevrError) * ddK)/deltaT + (integ_vre * diK)) * ((float)speed/127.0);
+        rSpeed = lSpeed * -1;
+      //  printf("\ntarget %f vle: %d speed %f rle %d speed %f", ticks, v_le, lSpeed, v_re, rSpeed);
+    //  printf("\ntarget: %f vle: %d speed: %f", ticks, v_le, lSpeed);
+        setDrive((int)lSpeed, (int) rSpeed);
+        prevlError = lerror;
+        prevrError = rerror;
+
+        if(integ_count >= integ_limit) {
+          integ_vle = 0;
+          integ_vre = 0;
+          integ_count = 0;
+        }
+
+        if(abs(ticks-v_re) < DRIVE_MOVE_THRESHOLD && flag == false) {
+           flag = true;
+           ltime = millis();
+        } else if(abs(ticks-v_re)  < DRIVE_MOVE_THRESHOLD && flag == true) {
+            if(millis()-ltime >= 400) break; //3020 plz
+            //else flag = false;
+        } else if (flag == true && abs(ticks-v_re) > DRIVE_TURN_THRESHOLD) {
+            flag = false;
+        }
+
+        if(millis()-stime >= max_time) break;
+        delay(10);
+    }
+    setAll(0);  //Disable motors
+
+}
+
 /*
 * Turn robot specified angle in degrees. Direction is 1 for positive, -1 for negative
 */
 void Drive::turn(float degrees, int speed, char direction) {
+
+  printf("\ngyro: %d speed %f", gyroGet(gyro), 23.0);
+
   bool flag = false;
   long stime = millis();
   int ltime = 0;

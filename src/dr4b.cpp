@@ -142,10 +142,10 @@ void DR4B::iterateCtl() {
   int speed = 0;
 
   if(stage == 0) {
-    if(millis() - dCmd >= 430) {
+    if(millis() - dCmd >= 400) {
       desiredLift = 0 + offset;
     } else {
-      desiredLift += 12;
+      desiredLift += 11;
     }
   }
   else if (stage == 1) {
@@ -176,7 +176,7 @@ void DR4B::iterateCtl() {
   float error = (desiredLift-getHeight('r'));
   rightMotor = PID(error);
   float leftMotor = rightMotor;
-  printf("height %d \n", getHeight('l'));
+  //printf("height %d \n", getHeight('l'));
 
   //printf("speed %f  error %f \n", rightMotor, error);
   //printf("right %f  left %f \n", rightMotor , leftMotor);
