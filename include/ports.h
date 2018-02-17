@@ -4,13 +4,13 @@
 //I2C Device ID's
 
 //Digital sensors (1-12)
-#define D_DRIVE_ENC_R1 1
-#define D_DRIVE_ENC_R2 2
+#define D_DRIVE_ENC_R1 2
+#define D_DRIVE_ENC_R2 3
 #define D_DRIVE_ENC_L1 11
 #define D_DRIVE_ENC_L2 12
 
 //analog sensors (1-10)
-#define A_DRIVE_GYRO 8
+#define A_DRIVE_GYRO 5
 #define A_LIFT_POT 3
 #define A_INTEG_POT 4
 //motor (1-10)

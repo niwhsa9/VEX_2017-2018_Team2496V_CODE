@@ -83,12 +83,12 @@ void operatorControl() {
 
     if(joystickGetDigital(1, 7, JOY_LEFT)) autonomous();
 
-    printf("%d \n", stackHeight);
+    //printf("%d \n", stackHeight);
     r6U = joystickGetDigital(1, 6, JOY_UP);
     r6D = joystickGetDigital(1, 6, JOY_DOWN);
     p6U = joystickGetDigital(2, 6, JOY_UP);
     p6D = joystickGetDigital(2, 6, JOY_DOWN);
-
+    printf("Gyro: %d", gyroGet(drive->gyro));
 
     lift->iterateCtl();
     mogolift->iterateCtl();
