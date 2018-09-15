@@ -1,35 +1,51 @@
 #include "main.h"
 #include "ports.h"
 #include "robot.h"
+#include "JINX.h"
 bool isSubInit = false;
 DR4B* lift;
 Drive* drive;
 Claw* claw;
+MogoLift* mogolift;
+Integrator* integrator;
 int prevButtonEvent = millis();
 char page = 0;
 char numPages = 5;
 
 void subsystemInit() {
   /* LIFT INITALIZATION */
-  int liftMotors[10] = {M_LIFT_TR, M_LIFT_BR, M_LIFT_TL, M_LIFT_BL};
-  int liftRev[10] = {-1, -1, 1, 1};
+  int liftMotors[10] = {M_LIFT_L, M_LIFT_R};
+  int liftRev[10] = {1, -1};
 
   //while(1) printf("%d", liftRev[2]);
-  int liftSensors[10] = {A_LIFT_POT_L, A_LIFT_POT_R};
-  lift = new DR4B("", liftMotors, liftRev, 4, liftSensors, 0);
+  int liftSensors[10] = {A_LIFT_POT};
+  lift = new DR4B("", liftMotors, liftRev, 2, liftSensors, 0);
   lift->init();
 
   int driveMotors[10] = {M_DRIVE_FR, M_DRIVE_BR, M_DRIVE_FL, M_DRIVE_BL};
-  int driveRev[10] = {-1, -1, 1, 1};
+  int driveRev[10] = {-1, -1, -1, -1};
   int driveSensors[10] = {D_DRIVE_ENC_L1, D_DRIVE_ENC_L2, D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, A_DRIVE_GYRO};
   drive = new Drive("", driveMotors, driveRev, 4, driveSensors, 1); //4 ports, 6 motors
   drive->init();
 
   int clawMotors[] = {M_CLAW};
   int clawRev[] = {1};
-  int clawSensors[] = {I2C_CLAW_ENC};
+  int clawSensors[] = {};
   claw = new Claw("", clawMotors, clawRev, 1, clawSensors, 2);
   claw->init();
+
+  int mogoMotors[10] = {M_MOGO_L, M_MOGO_R};
+  int mogoRev[10] = {1, -1};
+  int mogoSensors[10] = {};
+  mogolift = new MogoLift("", mogoMotors, mogoRev, 2, mogoSensors, 2); //4 ports, 6 motors
+  mogolift->init();
+
+  int integMotors[10] = {M_INTEG};
+  int integRev[10] = {1};
+  int integSensors[10] = {A_INTEG_POT};
+  integrator = new Integrator("", integMotors, integRev, 1, integSensors, 1); //4 ports, 6 motors
+  integrator->init();
+
   isSubInit = true;
 }
 
@@ -114,6 +130,9 @@ void initializeIO() {
 
 void initialize() {
   setTeamName("2496V");              //BHS Robopatty V :D
+  initJINX(stdout);
+  delay(100);
+  taskCreate(JINXRun, TASK_DEFAULT_STACK_SIZE, NULL, (TASK_PRIORITY_DEFAULT));
   subsystemInit();                   //Initalize subsystems for autonomous
   lcdInit(uart2);                    //Initalize LCD display
   lcdSetBacklight(uart2, true);      //Enable the backlight to make text more visible

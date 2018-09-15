@@ -10,18 +10,17 @@ class DR4B : Subsystem{
   		const int num, int sensors[10], const char id);
       void moveTo();
   		void debug();
+      void setSpeed(int speed);
   		void iterateCtl();
       void backup();
   		int eStop();
       void init();
       bool safe();
-      void setDesired(int position);
-      void unpack();
       int getHeight(char h);
-      bool prevOpComplete;
       bool safety;
-      bool isDown;
-
+      void setConst(char c, float f);
+      void setStack(int stck, int stg);
+      int desiredLift;
     private:
 
 
@@ -29,27 +28,23 @@ class DR4B : Subsystem{
       int startLiftL;
       int startLiftR;
 
-      const static float lK; //P loop constant
-      const static float alK; //P loop constant
-      const static float dK; //D loop constant
-      //Lift operating speed
       int liftSpeedL;
       int liftSpeedR;
 
-      int desiredLift; //desired position (as a zeroed potentiometer value)
+     //desired position (as a zeroed potentiometer value)
       int prevTime;
 
-      //lift ports
-      int _tr;
-      int _br;
-      int _tl;
-      int _bl;
+      //lift port
+      int _r;
+      int _l;
 
       //sensors
-      int _lp;
-      int _rp;
+      int pot;
+
 
       int prevErrorL;
       int prevErrorR;
+
+
 };
 #endif

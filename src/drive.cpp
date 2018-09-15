@@ -14,13 +14,13 @@ N:  50     =    70     =      =       =       =
 
 
 
-const float Drive::pK = 4.8f; //6.8f
-const float Drive::iK = 0.05f; //0.07f
-const float Drive::dK = 50.5; //0.0
+const float Drive::pK = 6.0f; //6.8f
+const float Drive::iK = 0.00f; //0.07f
+const float Drive::dK = 100.0; //0.0
 const int Drive::integ_limit = 20;
 
 const float Drive::dpK = 0.3f; //3.0f
-const float Drive::diK = 0.05f; //0.07f
+const float Drive::diK = 0.00f; //0.07f
 const float Drive::ddK = 10; //0.0
 
 Drive::Drive(const char *name, int motors[10], int revField[10],
@@ -50,7 +50,7 @@ void Drive::init() {
   re = encoderInit(D_DRIVE_ENC_R1, D_DRIVE_ENC_R2, true); //CHANGE FROM HARDCODE
 
   gyro = gyroInit(A_DRIVE_GYRO, 0);
-
+  setPID(5.2, 0, 10, 0.0);
   //zK = 0.2;
   //tK = 0.2;
 }
@@ -129,6 +129,8 @@ void Drive::move(float distance, int speed, int direction, unsigned int max_time
     int v_le = 0;
     int v_re = 0;
 
+    int prevTime = millis();
+
     bool flag = false;
     long stime = millis();
     int ltime = 0;
@@ -155,12 +157,152 @@ void Drive::move(float distance, int speed, int direction, unsigned int max_time
         integ_vle+= lerror;
         integ_vre+= rerror;
         integ_count++;
+        float deltaT = (millis()-prevTime);
+        prevTime = millis();
+        lSpeed = ((lerror * dpK) + ((lerror-prevlError) * ddK)/deltaT + (integ_vle * diK)) * ((float)speed/127.0) * direction;
+      //rSpeed = ((rerror * dpK) + ((rerror-prevrError) * ddK)/deltaT + (integ_vre * diK)) * ((float)speed/127.0) * direction;
+      //  lSpeed = PID(v_re-v_le);
+        rSpeed = lSpeed;
+      //  printf("\nspeed %f error %d", rSpeed, v_le-v_re);
+    //  printf("\ntarget: %f vle: %d speed: %f", ticks, v_le, lSpeed);
+        setDrive((int)lSpeed, (int) rSpeed);
+        prevlError = lerror;
+        prevrError = rerror;
 
-        lSpeed = ((lerror * dpK) + ((lerror-prevlError) * ddK) + (integ_vle * diK)) * ((float)speed/127.0) * direction;
-        rSpeed = ((rerror * dpK) + ((rerror-prevrError) * ddK) + (integ_vre * diK)) * ((float)speed/127.0) * direction;
-        //rSpeed = lSpeed;
+        if(integ_count >= integ_limit) {
+          integ_vle = 0;
+          integ_vre = 0;
+          integ_count = 0;
+        }
+
+        if(abs(ticks-v_re) < DRIVE_MOVE_THRESHOLD && flag == false) {
+           flag = true;
+           ltime = millis();
+        } else if(abs(ticks-v_re)  < DRIVE_MOVE_THRESHOLD && flag == true) {
+            if(millis()-ltime >= 400) break; //3020 plz
+            //else flag = false;
+        } else if (flag == true && abs(ticks-v_re) > DRIVE_TURN_THRESHOLD) {
+            flag = false;
+        }
+
+        if(millis()-stime >= max_time) break;
+        delay(10);
+    }
+    setAll(0);  //Disable motors
+
+}
+
+void Drive::encTurn(int ticks, int speed, int direction, unsigned int max_time) {
+
+    encoderReset(le);
+    encoderReset(re);
+    int v_le = 0;
+    int v_re = 0;
+
+    int prevTime = millis();
+
+    bool flag = false;
+    long stime = millis();
+    int ltime = 0;
+    float lSpeed = 0;
+    float rSpeed = 0;
+
+    int integ_vle = 0;
+    int integ_vre = 0;
+
+    int integ_count = 0;
+
+    int lerror = 0;
+    int rerror = 0;
+    int prevlError = 0;
+    int prevrError = 0;
+    //Check robot isn't at target within a threshold
+    while(true) {
+        //Grab integrated gyro value from PROS library
+        v_le = abs(encoderGet(le));
+        v_re = abs(encoderGet(re));
+
+        lerror = ticks-v_le;
+        rerror = ticks-v_re;
+        integ_vle+= lerror;
+        integ_vre+= rerror;
+        integ_count++;
+        float deltaT = (millis()-prevTime);
+        prevTime = millis();
+        lSpeed = ((lerror * dpK) + ((lerror-prevlError) * ddK)/deltaT + (integ_vle * diK)) * ((float)speed/127.0);
+        rSpeed = ((rerror * dpK) + ((rerror-prevrError) * ddK)/deltaT + (integ_vre * diK)) * ((float)speed/127.0);
+        rSpeed = lSpeed * direction;
       //  printf("\ntarget %f vle: %d speed %f rle %d speed %f", ticks, v_le, lSpeed, v_re, rSpeed);
-      printf("\ntarget: %f vle: %d speed: %f", ticks, v_le, lSpeed);
+    //  printf("\ntarget: %f vle: %d speed: %f", ticks, v_le, lSpeed);
+        setDrive((int)lSpeed, (int) rSpeed);
+        prevlError = lerror;
+        prevrError = rerror;
+
+        if(integ_count >= integ_limit) {
+          integ_vle = 0;
+          integ_vre = 0;
+          integ_count = 0;
+        }
+
+        if(abs(ticks-v_re) < DRIVE_MOVE_THRESHOLD && flag == false) {
+           flag = true;
+           ltime = millis();
+        } else if(abs(ticks-v_re)  < DRIVE_MOVE_THRESHOLD && flag == true) {
+            if(millis()-ltime >= 400) break; //3020 plz
+            //else flag = false;
+        } else if (flag == true && abs(ticks-v_re) > DRIVE_TURN_THRESHOLD) {
+            flag = false;
+        }
+
+        if(millis()-stime >= max_time) break;
+        delay(10);
+    }
+    setAll(0);  //Disable motors
+
+}
+
+void Drive::clugyencTurn(int ticks, int speed, int direction, unsigned int max_time) {
+
+    encoderReset(le);
+    encoderReset(re);
+    int v_le = 0;
+    int v_re = 0;
+
+    int prevTime = millis();
+
+    bool flag = false;
+    long stime = millis();
+    int ltime = 0;
+    float lSpeed = 0;
+    float rSpeed = 0;
+
+    int integ_vle = 0;
+    int integ_vre = 0;
+
+    int integ_count = 0;
+
+    int lerror = 0;
+    int rerror = 0;
+    int prevlError = 0;
+    int prevrError = 0;
+    //Check robot isn't at target within a threshold
+    while(true) {
+        //Grab integrated gyro value from PROS library
+        v_le = abs(encoderGet(le));
+        v_re = abs(encoderGet(re));
+
+        lerror = ticks-v_le;
+        rerror = ticks-v_re;
+        integ_vle+= lerror;
+        integ_vre+= rerror;
+        integ_count++;
+        float deltaT = (millis()-prevTime);
+        prevTime = millis();
+        lSpeed = -((lerror * dpK) + ((lerror-prevlError) * ddK)/deltaT + (integ_vle * diK)) * ((float)speed/127.0);
+        rSpeed = ((rerror * dpK) + ((rerror-prevrError) * ddK)/deltaT + (integ_vre * diK)) * ((float)speed/127.0);
+        rSpeed = lSpeed * -1;
+      //  printf("\ntarget %f vle: %d speed %f rle %d speed %f", ticks, v_le, lSpeed, v_re, rSpeed);
+    //  printf("\ntarget: %f vle: %d speed: %f", ticks, v_le, lSpeed);
         setDrive((int)lSpeed, (int) rSpeed);
         prevlError = lerror;
         prevrError = rerror;
@@ -192,6 +334,9 @@ void Drive::move(float distance, int speed, int direction, unsigned int max_time
 * Turn robot specified angle in degrees. Direction is 1 for positive, -1 for negative
 */
 void Drive::turn(float degrees, int speed, char direction) {
+
+  printf("\ngyro: %d speed %f", gyroGet(gyro), 23.0);
+
   bool flag = false;
   long stime = millis();
   int ltime = 0;
@@ -203,6 +348,7 @@ void Drive::turn(float degrees, int speed, char direction) {
   int integ_count = 0;
   int error = 0;
   int prevError = 0;
+  int prevTime = millis();
   //Check robot isn't at target within a threshold
   while(true) {
       //Grab integrated gyro value from PROS library
@@ -210,8 +356,10 @@ void Drive::turn(float degrees, int speed, char direction) {
       error = degrees - cur_gyro;
       integ_gyro+= error;
       integ_count++;
+      int deltaT = millis()-prevTime;
+      prevTime = millis();
 
-      lSpeed = ((error * pK) + ((error-prevError) * dK) + (integ_gyro * iK)) * ((float)speed/127.0) * direction;
+      lSpeed = ((error * pK) + ((error-prevError)/deltaT * dK) + (integ_gyro * iK)) * ((float)speed/127.0) * direction;
       rSpeed = lSpeed * -1;
 
       printf("\ngyro: %d speed %f", cur_gyro, lSpeed);
@@ -224,16 +372,17 @@ void Drive::turn(float degrees, int speed, char direction) {
       }
 
       //undef
-      if(abs(integ_gyro - degrees) < DRIVE_TURN_THRESHOLD && flag == false) {
+      if(abs(integ_gyro - degrees) < DRIVE_TURN_THRESHOLD && abs(lSpeed) < 15) {
          flag = true;
          ltime = millis();
+         break;
       } else if(abs(integ_gyro - degrees) < DRIVE_TURN_THRESHOLD && flag == true) {
           if(millis()-ltime >= 300) break; //3020 plz
           //else flag = false;
       } else if (flag == true && abs(integ_gyro - degrees) > DRIVE_TURN_THRESHOLD) {
           //flag = false;
       }
-      if(millis()-stime >= 2000) break;
+      if(millis()-stime >= 1500) break;
       delay(10);
   }
   setAll(0);  //Disable motors
@@ -282,10 +431,12 @@ void Drive::iterateCtl() {
       speed[i] = (((float)js[i]/127) * ((float)js[i]/127)) * 127 * dir;
 
   }
-  int left =(int) speed[0];
-  int right = (int) speed[1];
-
+  int left =(int) speed[0] + (joystickGetAnalog(2, 2) + joystickGetAnalog(2, 1))/2;
+  int right = (int) speed[1] +  (joystickGetAnalog(2, 2) - joystickGetAnalog(2, 1))/2;
+  if(abs(left) <= 15) left = 0;
+  if(abs(right) <= 15) right = 0;
 //  printf("left %d", left);
 //  printf("right %d", right);
 setDrive(left, right);
+//printf("\nleft: %d right %d", encoderGet(le), encoderGet(re));
 }

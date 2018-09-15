@@ -26,6 +26,12 @@ class Subsystem {
 		virtual void iterateCtl() = 0;//Main operator control loop
 		virtual int eStop() = 0; //Emergency stop functionality
 		~Subsystem(); //Destructor for memory cleanup
+		void setPID(float p, float i, float d, int integ_limit);
+		void setAltPID(float p, float i, float d);
+		float PID(float error);
+		float altPID(float error);
+		void setConst(char c, float val);
+		float p, i, d;
 	protected:
 		const char *_name; //Generic string identifier
 		int _motors[10]; //Associated motor ports
@@ -33,6 +39,23 @@ class Subsystem {
 		const int _num; //Number of motors/reverse values
 		int _sensors[10];//Associated sensor ports
 		const char _id;//Unique unsigned byte identifier
+		float pK;
+		float iK;
+		float dK;
+
+		float prevError;
+		float integ_data;
+		int integ_limit;
+		int integ_count;
+
+		float aerror;
+		float aprevError;
+		float ainteg_data;
+
+		float apK;
+		float aiK;
+		float adK;
+		long prevTime;
 };
 
 

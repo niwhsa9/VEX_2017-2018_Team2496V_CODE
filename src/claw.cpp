@@ -54,15 +54,20 @@ int Claw::eStop() {
 * Main control loop with user input
 */
 void Claw::iterateCtl() {
+
   if (joystickGetDigital(1, 5, JOY_UP) && joystickGetDigital(1, 5, JOY_DOWN)) {
     setMotor(0, 30);
   }
-  else if(joystickGetDigital(1, 5, JOY_UP)) {
-    setMotor(0, 80);
-  } else if (joystickGetDigital(1, 5, JOY_DOWN)) {
-    setMotor(0, -80);
-  } else {
-    setMotor(0, 0);
+  else if(joystickGetDigital(1, 5, JOY_UP) || joystickGetDigital(2, 8, JOY_LEFT)) {
+    setMotor(0, 50);
+    lastBtn = true;
+  } else if (joystickGetDigital(1, 5, JOY_DOWN) || joystickGetDigital(2, 8, JOY_DOWN)) {
+    setMotor(0, -50);
+    lastBtn = false;
+  } else if(joystickGetDigital(1, 8, JOY_DOWN)) setMotor(0, 9);
+  else {
+       if(lastBtn == true) setMotor(0, 17);
+       else setMotor(0, 9);
 
   }
 }

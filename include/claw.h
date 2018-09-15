@@ -19,6 +19,7 @@ class Claw: Subsystem{
     private:
       //drive ports
       int _cm;
+      bool lastBtn;
 
       //sensors
       int enc;

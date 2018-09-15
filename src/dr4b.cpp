@@ -1,7 +1,10 @@
+
 #include "dr4b.h"
-const float DR4B::lK= 0.12f;
-const float DR4B::dK = 0.002f; //0.05
-const float DR4B::alK= 0.15f;
+
+int prev = 0;
+int prev2 = 0;
+float rightMotor = 0;
+
 DR4B::DR4B(const char *name, int motors[10],	int revField[10],
   const int num, int sensors[10], const char id=255):
   Subsystem(name, motors, revField, num, sensors, id)
@@ -10,13 +13,9 @@ DR4B::DR4B(const char *name, int motors[10],	int revField[10],
 * Read potentiometer on specified side
 */
 int DR4B::getHeight(char h) {
-//  printf("MOTOR 1 %d", _motors[1]);
-  if(h=='l') {
-    //printf("\n %d", _revField[2]);
-    return analogRead(_sensors[0]);
-  } else {
-    return analogRead(_sensors[1]);
-  }
+
+    return DR4B_START - analogRead(_sensors[0]);
+
 }
 
 /*
@@ -24,107 +23,41 @@ int DR4B::getHeight(char h) {
 * ALWAYS EXPLICITLY call this after initalization.
 */
 void DR4B::init() {
+  _l = _motors[0];
+  _r = _motors[1];
 
-  //liftSpeedL = DR4B_START_L;
-  //liftSpeedR = DR4B_START_R;
+  setPID(0.4, 0.0, 7.0, 1000000);
+  setAltPID(0.0, 0.0, 0.0);
   desiredLift = 0;
-  startLiftL =  DR4B_START_L;
-  startLiftR =  DR4B_START_R;
-  prevTime = millis();
-  prevErrorL = 0;
-  prevErrorR = 0;
-  _tr = 0;
-  _br = 1;
-  _tl = 2;
-  _bl = 3;
-  prevOpComplete = true;
-  safety = false;
 }
 
 /*
 * Set desiredLift value used in moveTo()
 * and iterateCtl()
-*/
-void DR4B::setDesired(int position) {
-  prevOpComplete = false;
-  desiredLift = position;
-}
-
-void DR4B::unpack() {
-  int atime = millis();
-  setDesired(500);
-  while(!prevOpComplete && millis() - atime <= 550) moveTo();
-  setDesired(50);
-  atime = millis();
-  while(!prevOpComplete) {
-    //printf("height %d", getHeight('l'));
-    moveTo();
-  }
-
-}
+/
 
 /*
 * Move lift to value speified by desiredLift
 * start on seperate thread for continious control
 * in autonomous mode
 */
-void DR4B::moveTo() { //change position to percentage?
-  int currentLiftL=0;
-  int currentLiftR=0;
-  prevErrorL = 0;
-  prevErrorR = 0;
-//  while(/*abs(currentLiftR-desiredLift) >= DR4B_THRESHOLD && abs(currentLiftL-desiredLift) >= DR4B_THRESHOLD*/1) {
 
-    currentLiftL = getHeight('l') - startLiftL;
-    currentLiftR = getHeight('r') - startLiftR;
-    //  printf("debug %d", currentLiftL);
-
-    int curErrorR = (desiredLift-currentLiftR);
-    int curErrorL = (desiredLift-currentLiftL);
-
-    liftSpeedR = (lK * curErrorR) + (0 * (curErrorR-prevErrorR));
-    liftSpeedL = (lK * curErrorL) + (0 * (curErrorL-prevErrorL));
-
-    prevErrorL = curErrorL;
-    prevErrorR = curErrorR;
-
-    setMotor(_br, liftSpeedR);
-    setMotor(_bl, liftSpeedL);
-    setMotor(_tr, liftSpeedR);
-    setMotor(_tl, liftSpeedL);
-
-    if(abs(currentLiftL-desiredLift) <= DR4B_THRESHOLD) {
-      prevOpComplete = true;
-      setAll(0);
-    }
-    //delay(10);
-//  }
-}
 
 /*
 * Ensure that both feedback potentiometers
 * are functional
 */
-bool DR4B::safe() {
-  if(getHeight('l') != A_UNPLUG && getHeight('r') != A_UNPLUG && safety != true) {
-    return true;
-  } else return false;
-}
 
 /*
 * Secondary control set, no control loop
 */
 void DR4B::backup() {
-  if(joystickGetDigital(1, 7, JOY_RIGHT)) {
-    safety = false;
-    desiredLift = 0;
-  }
-  if(joystickGetDigital(1,6, JOY_UP)){
-    setAll(80);
-  } else if (joystickGetDigital(1,6,JOY_DOWN)){
-    setAll(-80);
+  if(joystickGetDigital(2,6, JOY_UP)){
+    setAll(127);
+  } else if (joystickGetDigital(2,6,JOY_DOWN)){
+    setAll(-127);
   } else setAll(0);
-  if(joystickGetDigital(1,5, JOY_UP)){ //rm
+  if(joystickGetDigital(2,5, JOY_UP)){ //rm
      motorSet(6, 40);
     //setMotor(1, 127);
   } else motorSet(6, 0);
@@ -135,8 +68,41 @@ void DR4B::backup() {
 * Debug
 */
 void DR4B::debug() {
-  printf("LEFT %d \n", getHeight('l')-startLiftL);
-  printf("RIGHT %d \n", getHeight('r')-startLiftR);
+  /*if(millis() - prev >= 5000) {
+    char PIDV[20];
+    sprintf(PIDV, "%f %f %f", pK, iK, dK);
+    writeJINXMessage(PIDV);
+    prev = millis();
+  }
+  */
+  if(millis() - prev2 >= 100) {
+    //char actual[10];
+    /*
+    sprintf(actual, "%d", getHeight('l'));
+    writeJINXData("actual", actual);
+
+    char desired[10];
+    sprintf(desired, "%d", desiredLift);
+    writeJINXData("desired", desired); */
+
+
+/*
+    char de[10];
+    sprintf(de, "%f", d);
+    writeJINXData("derrivative", de);
+
+    char pe[10];
+    sprintf(pe, "%f", p);
+    writeJINXData("proportional", pe);
+*/
+/*
+  char spedz[10];
+  sprintf(spedz, "%f", rightMotor);
+  writeJINXData("spedz", spedz);
+    prev2 = millis();
+*/
+  //printf("\n %f", rightMotor);
+  }
 }
 
 /*
@@ -149,81 +115,88 @@ int DR4B::eStop() {
   return 0;
 }
 
+void DR4B::moveTo() {
+  if(desiredLift<=0) desiredLift = 0;
+  //if(joystickGetDigital(2, 7, JOY_DOWN)) desiredLift= 1000;
+  float error = (desiredLift-getHeight('r'));
+  rightMotor = PID(error);
+  float leftMotor = rightMotor;
+  //printf("height %d \n", getHeight('l'));
+
+  //printf("speed %f  error %f \n", rightMotor, error);
+  //printf("right %f  left %f \n", rightMotor , leftMotor);
+
+  setMotor(0, leftMotor);
+  setMotor(1, rightMotor);
+}
+
 /*
 * Main proportional/derrivitave control loop with user input
 * TODO: Integral component
 */
+void DR4B::setSpeed(int speed) {
+  setAll(speed);
+}
+
 void DR4B::iterateCtl() {
-  if(joystickGetDigital(1, 7, JOY_LEFT)) safety = true;
+  int speed = 0;
 
-  int currentLiftL = getHeight('l') - startLiftL;                                         //Get lift heights in zeroed potetiometer values
-  int currentLiftR = getHeight('r') - startLiftR;
-  if(joystickGetDigital(1,6, JOY_UP)){                                                    //Take input as close to fixed sample rate
-    if((millis()- prevTime) >= 10) {
-      prevTime = millis();
-      desiredLift+=18; //14                                                                   //Increase desired position when given corresponding input
-    }
-  } else if (joystickGetDigital(1,6,JOY_DOWN)){                                           //Take input as close to fixed sample rate
-    if((millis() - prevTime) >= 10) {
-      prevTime = millis();
-      //desiredLift-=18;
-      isDown = true;                                                          //Decrease desired position when given corresponding input
-    }
-  } else if(joystickGetDigital(1,8, JOY_UP)){
-    if(millis() - prevTime >= 10) {
-      prevTime = millis();
-      desiredLift = LOADER_PRESET;
-    }
-  } else if(joystickGetDigital(1, 8, JOY_DOWN)) {
-    if((millis() - prevTime) >= 10) {
-      prevTime = millis();
-      desiredLift-=5;                                                                    //Decrease desired position when given corresponding input
-    }
-  } else if(joystickGetDigital(1,8, JOY_RIGHT)){
-    if(millis() - prevTime >= 10) {
-      prevTime = millis();
-      desiredLift = STATIONARY_PRESET;
+  if(stage == 0) {
+    if(millis() - dCmd >= 400) {
+      desiredLift = 0 + offset;
+    } else {
+      desiredLift += 11;
     }
   }
-  if(desiredLift > DR4B_MAX) desiredLift = DR4B_MAX;                                      //Bounds check, do not try to force lift past physical limit
-  else if (desiredLift < 5) desiredLift = 5;
-
-  if(joystickGetDigital(1,6,JOY_DOWN) != true && isDown == true) {
-    isDown = false;
-    desiredLift = currentLiftL-18*2;
-
+  else if (stage == 1) {
+    if(desiredLift - getHeight('c') <= INTEG_GO) stage = 2;
+    desiredLift = ((stackHeight-1) * 100 + firstCone);
+  } else if(stage == 4) {
+    if(millis()- sCmd <= 200) desiredLift -= 8;
+  }
+  else if (stage == 3) {
+    setMotor(0, joystickGetAnalog(2, 3));
+    setMotor(1, joystickGetAnalog(2, 3));
+    return;
+    //desiredLift += (int)((float)joystickGetAnalog(2, 3)/5.0);
   }
 
-  int curErrorR = (desiredLift-currentLiftR);                                             //Calculate error between desired and actual
-  int curErrorL = (desiredLift-currentLiftL);
-  if(!isDown) {
-                                                                            //Add proportional and derrivitave components for control outpt
-  liftSpeedR = (lK * curErrorR) + (dK * (curErrorR-prevErrorR));
 
-  liftSpeedL = liftSpeedR;
-} else {
-  if(currentLiftL >= 0) {
-  liftSpeedL = -90;
-  liftSpeedR = -90;
-} else {
-  liftSpeedL = -20;
-  liftSpeedR =-20;
+  /*
+  if(joystickGetDigital(2,6, JOY_UP)){
+    speed = 120;
+    desiredLift+=20;
+  } else if (joystickGetDigital(2,6,JOY_DOWN)){
+    desiredLift-=20;
+    speed = -120;
+  } else speed = 0; */
+
+  if(desiredLift<=0) desiredLift = 0;
+  //if(joystickGetDigital(2, 7, JOY_DOWN)) desiredLift= 1000;
+  float error = (desiredLift-getHeight('r'));
+  rightMotor = PID(error);
+  float leftMotor = rightMotor;
+  //printf("height %d \n", getHeight('l'));
+
+  //printf("speed %f  error %f \n", rightMotor, error);
+  //printf("right %f  left %f \n", rightMotor , leftMotor);
+  if(stage == 0) {
+    if(millis() - dCmd >= 430) {
+        if(leftMotor > -10) {
+          leftMotor = -10;
+          rightMotor = -10;
+        }
+    }
+  }
+
+  setMotor(0, leftMotor);
+  setMotor(1, rightMotor);
+
+
+
+  //printf(height);
 }
-}
-  //liftSpeedL = (lK * curErrorL) + (dK * (curErrorL-prevErrorL));
-                                                                                          /**                                                               **
-                                                                                          * Proportional: constant x error. Apply more correction for larger *
-                                                                                          * error                                                            *
-                                                                                *------------------------------------------------------------------*                                                 *
-                                                                                          * Derrivitave: constant x instantaneous rate of change.            *
-                                                                                          * Apply more correction with larger change                         *
-                                                                                          **                                                                **/
 
-  prevErrorL = curErrorL;                                                                 //Set prevError storage to now used current error information
-  prevErrorR = curErrorR;
-
-  setMotor(_br, liftSpeedR);                                                              //Set motors according to calculated input from PD loop
-  setMotor(_bl, liftSpeedL);
-  setMotor(_tr, liftSpeedR);
-  setMotor(_tl, liftSpeedL);
+void DR4B::setConst(char c, float f) {
+  Subsystem::setConst(c, f);
 }
